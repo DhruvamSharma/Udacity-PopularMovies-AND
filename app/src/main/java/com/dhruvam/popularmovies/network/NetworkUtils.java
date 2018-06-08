@@ -6,11 +6,9 @@ import android.util.Log;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.dhruvam.popularmovies.pojo.Movie;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
+import com.androidnetworking.interfaces.ParsedRequestListener;
+import com.dhruvam.popularmovies.MainActivity;
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 
 /**
  * Created by dell on 05-06-2018.
@@ -18,41 +16,34 @@ import org.json.JSONObject;
 
 public class NetworkUtils {
 
+    private static MovieResponse[] mResponse = new MovieResponse[1];
+
+
     public static void init(Context context) {
         AndroidNetworking.initialize(context);
     }
 
-    public static Movie getHttpResponse(String url) {
-        final Movie[] result = new Movie[1];
+    public static void getHttpResponse(String url) {
         AndroidNetworking.get(url)
                 .setTag("test")
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
+                .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        result[0] = parseJson(response);
+                    public void onResponse(MovieResponse response) {
+                        Log.e("response",response.toString());;
+                        mResponse[0] = response;
+                        MainActivity.receiveData(mResponse[0]);
                     }
 
                     @Override
-                    public void onError(ANError error) {
-                        result[0] = null;
+                    public void onError(ANError anError) {
+                        Log.e("response_error", anError.getErrorBody());
                     }
 
                 });
 
-
-        return result[0];
-
     }
 
-    private static Movie parseJson(JSONObject object) {
-        if (object == null) {
-            Log.e("error_null","empty");
-            return null;
-        }
-        Gson gson = new Gson();
-        return gson.fromJson(object.toString(), Movie.class);
-    }
 
 }

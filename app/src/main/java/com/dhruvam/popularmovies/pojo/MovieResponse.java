@@ -9,7 +9,7 @@ import java.util.List;
  * Created by dell on 05-06-2018.
  */
 
-public class Movie {
+public class MovieResponse {
 
     @SerializedName("page")
     @Expose
