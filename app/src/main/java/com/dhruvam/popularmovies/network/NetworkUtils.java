@@ -1,7 +1,6 @@
 package com.dhruvam.popularmovies.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -31,14 +30,13 @@ public class NetworkUtils {
                 .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
                     public void onResponse(MovieResponse response) {
-                        Log.e("response",response.toString());;
                         mResponse[0] = response;
                         MainActivity.receiveData(mResponse[0]);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e("response_error", anError.getErrorBody());
+                        /* handle error situation */
                     }
 
                 });

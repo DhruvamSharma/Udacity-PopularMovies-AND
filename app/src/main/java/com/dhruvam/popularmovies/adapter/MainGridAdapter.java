@@ -1,15 +1,17 @@
 package com.dhruvam.popularmovies.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.dhruvam.popularmovies.R;
+import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
 
@@ -62,18 +64,18 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         String image_url = mContext.getResources().getString(R.string.thumbnail_url);
+        String headerQuality = mContext.getResources().getString(R.string.thumbnail_quality_6);
         if(mResponse != null){
             switch (holder.getItemViewType()) {
 
                 case LAYOUT_HEADER:
 
                     MovieAdapterViewHolderHeader viewHolderHeader = (MovieAdapterViewHolderHeader) holder;
-                    Picasso.with(mContext).load(image_url+mImageQuality+mResponse.getResults().get(position).getPosterPath()).into(viewHolderHeader.mThumbnail);
+                    Picasso.with(mContext).load(image_url+headerQuality+mResponse.getResults().get(position).getPosterPath()).into(viewHolderHeader.mThumbnail);
                     break;
 
                 case LAYOUT_GRID:
                     MovieAdapterViewHolderGrid viewHolderGrid = (MovieAdapterViewHolderGrid) holder;
-                    viewHolderGrid.movieName.setText(mResponse.getResults().get(position).getTitle());
                     Picasso.with(mContext).load(image_url+mImageQuality+mResponse.getResults().get(position).getPosterPath()).into(viewHolderGrid.mThumbnail);
                     break;
             }
@@ -99,28 +101,47 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class MovieAdapterViewHolderGrid extends RecyclerView.ViewHolder {
+    class MovieAdapterViewHolderGrid extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView mThumbnail;
-        TextView movieName;
+
         MovieAdapterViewHolderGrid(View itemView) {
             super(itemView);
             mThumbnail = itemView.findViewById(R.id.main_thumbnail_iv);
-            movieName = itemView.findViewById(R.id.movie_name_tv);
+        }
+
+        @Override
+        public void onClick(View v) {
+            newActivity();
         }
     }
 
-    class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder {
+    class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView mThumbnail;
 
-        public MovieAdapterViewHolderHeader(View itemView) {
+        MovieAdapterViewHolderHeader(View itemView) {
             super(itemView);
             mThumbnail = itemView.findViewById(R.id.main_image_backdrop);
         }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
+            Log.e("reach","here");
+            mContext.startActivity(intent);
+        }
     }
+
+    /* Helper Methods */
 
     public void switchAdapter(MovieResponse response) {
         mResponse = response;
         notifyDataSetChanged();
+    }
+
+    private void newActivity() {
+        Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
+        Log.e("reach","here");
+        mContext.startActivity(intent);
     }
 }

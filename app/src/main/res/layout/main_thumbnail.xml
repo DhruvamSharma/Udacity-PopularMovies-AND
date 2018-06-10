@@ -1,37 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="500dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/main_image_backdrop"
+        android:scaleType="fitXY"
         android:contentDescription="@string/mobie_thumbnail_img"/>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:layout_gravity="center|bottom">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_to_list_ib"/>
+            android:id="@+id/add_to_list_ib"
+            android:background="@drawable/ic_baseline_add"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/play_btn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/play_btn"
-            android:text="@string/play"/>
+            android:text="@string/play"
+            android:drawableStart="@drawable/ic_baseline_play_arrow"
+            android:background="#fcfbfb"
+            android:drawablePadding="@dimen/cardview_default_elevation"
+
+            app:layout_constraintBottom_toBottomOf="@id/more_description_ib"
+            app:layout_constraintStart_toEndOf="@id/add_to_list_ib"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/more_description_ib"/>
 
         <ImageButton
             android:id="@+id/more_description_ib"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_outline_info_24px"
 
-    </LinearLayout>
+            app:layout_constraintStart_toEndOf="@id/play_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
+
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
