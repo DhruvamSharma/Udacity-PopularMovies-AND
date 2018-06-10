@@ -107,6 +107,12 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         MovieAdapterViewHolderGrid(View itemView) {
             super(itemView);
             mThumbnail = itemView.findViewById(R.id.main_thumbnail_iv);
+            mThumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    newActivity();
+                }
+            });
         }
 
         @Override
@@ -115,21 +121,22 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder{
 
         ImageView mThumbnail;
 
         MovieAdapterViewHolderHeader(View itemView) {
             super(itemView);
             mThumbnail = itemView.findViewById(R.id.main_image_backdrop);
+            mThumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    newActivity();
+                }
+            });
         }
 
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
-            Log.e("reach","here");
-            mContext.startActivity(intent);
-        }
+
     }
 
     /* Helper Methods */
