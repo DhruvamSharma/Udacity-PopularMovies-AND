@@ -1,11 +1,13 @@
 package com.dhruvam.popularmovies;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
+import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
@@ -13,13 +15,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String MOVIE_URL;
     static MovieResponse mResponse;
-    RecyclerView mMovieList;
+    private ActivityMainBinding mBinding;
     static MainGridAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        Toolbar myToolbar = getSupportActionBar();
 
         /* setting upbase URL */
         MOVIE_URL = getResources().getString(R.string.base_url);
@@ -29,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         NetworkUtils.getHttpResponse(MOVIE_URL+getResources().getString(R.string.api_key));
 
         /* Setting up recycler View */
-        mMovieList = findViewById(R.id.movie_list_rv);
         adapter = new MainGridAdapter(getApplicationContext());
         GridLayoutManager manager = new GridLayoutManager(getApplicationContext(),3);
 
@@ -45,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
            }
         });
 
-        mMovieList.setAdapter(adapter);
-        mMovieList.setLayoutManager(manager);
+        mBinding.movieListRv.setAdapter(adapter);
+        mBinding.movieListRv.setLayoutManager(manager);
+
+
+
     }
 
     public static void receiveData(MovieResponse response) {

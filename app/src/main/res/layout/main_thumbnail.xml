@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="500dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <ImageView
+<layout>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/main_image_backdrop"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/mobie_thumbnail_img"/>
+        android:layout_height="500dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_gravity="center|bottom">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_image_backdrop"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/mobie_thumbnail_img"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/add_to_list_ib"
-            android:background="@drawable/ic_baseline_add"
+            android:layout_marginBottom="24dp"
+            android:layout_gravity="center|bottom">
 
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/play_btn"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_to_list_ib"
+                android:background="@drawable/ic_baseline_add"
+                style="@style/PopularMovies.ButtonAppearance"
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/play_btn"
-            android:text="@string/play"
-            android:drawableStart="@drawable/ic_baseline_play_arrow"
-            android:background="#fcfbfb"
-            android:drawablePadding="@dimen/cardview_default_elevation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/play_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
 
-            app:layout_constraintBottom_toBottomOf="@id/more_description_ib"
-            app:layout_constraintStart_toEndOf="@id/add_to_list_ib"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/more_description_ib"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/play_btn"
+                android:text="@string/play"
+                android:drawableStart="@drawable/ic_baseline_play_arrow"
+                android:background="#fcfbfb"
+                android:drawablePadding="@dimen/cardview_default_elevation"
 
-        <ImageButton
-            android:id="@+id/more_description_ib"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_outline_info_24px"
+                app:layout_constraintBottom_toBottomOf="@id/more_description_ib"
+                app:layout_constraintStart_toEndOf="@id/add_to_list_ib"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/more_description_ib"/>
 
-            app:layout_constraintStart_toEndOf="@id/play_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
+            <ImageButton
+                android:id="@+id/more_description_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_outline_info_24px"
 
-    </android.support.constraint.ConstraintLayout>
+                app:layout_constraintStart_toEndOf="@id/play_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/play_btn"/>
 
-</FrameLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

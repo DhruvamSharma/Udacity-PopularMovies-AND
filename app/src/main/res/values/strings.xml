@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PopularMovies</string>
     <string name="mobie_thumbnail_img">mobie_thumbnail</string>
-    <string name="base_url">http://api.themoviedb.org/3/movie/popular?api_key=</string>
+    <string name="base_url">http://api.themoviedb.org/3/discover/movie?api_key=</string>
     <string name="api_key">5d5b4588dc71d0e50c29f2caa9221fa0</string>
     <string name="thumbnail_url">http://image.tmdb.org/t/p/</string>
     <string name="thumbnail_quality_1">w92</string>

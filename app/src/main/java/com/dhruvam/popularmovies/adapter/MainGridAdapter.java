@@ -2,9 +2,10 @@ package com.dhruvam.popularmovies.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 /**
  * Created by dell on 05-06-2018.
@@ -27,6 +30,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final int LAYOUT_HEADER = 52456;
     private static final int LAYOUT_GRID = 84562;
+
 
     public MainGridAdapter(Context context) {
         mResponse = null;
@@ -101,7 +105,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class MovieAdapterViewHolderGrid extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MovieAdapterViewHolderGrid extends RecyclerView.ViewHolder{
         ImageView mThumbnail;
 
         MovieAdapterViewHolderGrid(View itemView) {
@@ -110,15 +114,12 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mThumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    newActivity();
+
+                    newActivity(getAdapterPosition());
                 }
             });
         }
 
-        @Override
-        public void onClick(View v) {
-            newActivity();
-        }
     }
 
     class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder{
@@ -131,7 +132,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mThumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    newActivity();
+                    newActivity(getAdapterPosition());
                 }
             });
         }
@@ -146,9 +147,17 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    private void newActivity() {
+    private void newActivity(int position) {
+
+        /* Parcelable code */
+        Parcelable parcelable = Parcels.wrap(mResponse.getResults().get(position));
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(mContext.getPackageName(), parcelable);
+
+        /* Intent code */
+
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
-        Log.e("reach","here");
+        intent.putExtra(mContext.getPackageName(), bundle);
         mContext.startActivity(intent);
     }
 }
