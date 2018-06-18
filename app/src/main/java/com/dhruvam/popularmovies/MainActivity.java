@@ -4,7 +4,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.Toolbar;
 
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
@@ -23,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        Toolbar myToolbar = getSupportActionBar();
 
         /* setting upbase URL */
         MOVIE_URL = getResources().getString(R.string.base_url);

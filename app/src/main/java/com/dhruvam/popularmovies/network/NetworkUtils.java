@@ -7,6 +7,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.dhruvam.popularmovies.MainActivity;
+import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
 /**
@@ -32,6 +33,27 @@ public class NetworkUtils {
                     public void onResponse(MovieResponse response) {
                         mResponse[0] = response;
                         MainActivity.receiveData(mResponse[0]);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        /* handle error situation */
+                    }
+
+                });
+
+    }
+
+    public static void getHttpResponseForSimilarMovies(String url) {
+        AndroidNetworking.get(url)
+                .setTag("test")
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
+                    @Override
+                    public void onResponse(MovieResponse response) {
+                        mResponse[0] = response;
+                        MovieDescriptionActivity.receiveData(mResponse[0]);
                     }
 
                     @Override
