@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    android:paddingStart="16dp"
+    android:background="@android:color/black">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/customization_label"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/settings_label"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/category_rg"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_rg"
+        android:layout_marginTop="8dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_label">
+        <RadioButton
+            android:id="@+id/top_rated_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/top_rated_label"
+            android:textColor="#fff"
+            android:theme="@style/PopularMovies.BottomSheet.RadioButton"/>
+        <RadioButton
+            android:id="@+id/most_popular_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/most_popular_label"
+            android:theme="@style/PopularMovies.BottomSheet.RadioButton"/>
+        <RadioButton
+            android:id="@+id/upcoming_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upcoming_label"
+            android:theme="@style/PopularMovies.BottomSheet.RadioButton"/>
+        <RadioButton
+            android:id="@+id/now_playing_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/now_playing_label"
+            android:theme="@style/PopularMovies.BottomSheet.RadioButton"/>
+
+    </RadioGroup>
+    
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/apply_btn"
+        android:text="@string/apply_btn"
+        android:theme="@style/MyButton"
+        android:background="@android:color/holo_red_dark"
+        style="@style/PopularMovies.ButtonAppearance"
+
+        app:layout_constraintStart_toEndOf="@id/clear_selection_btn"
+        app:layout_constraintTop_toTopOf="@id/clear_selection_btn"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/clear_selection_btn"
+        android:text="@string/clear_selection"
+        android:theme="@style/MyButton"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_marginTop="8dp"
+        android:textColor="#fff"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/category_rg"
+        app:layout_constraintEnd_toStartOf="@id/apply_btn"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/loader_pb"
+
+        app:layout_constraintStart_toEndOf="@id/apply_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintTop_toTopOf="@id/apply_btn"/>
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,10 +1,15 @@
 package com.dhruvam.popularmovies.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.View;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
@@ -20,13 +25,14 @@ import java.util.List;
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
-    private ActivityMovieDescriptionBinding binding;
+    private static ActivityMovieDescriptionBinding binding;
     String mImageQuality;
-    private static final int MAX_LINES =1;
+    private static final int MAX_LINES =2;
     static MovieResponse mResponse;
     static SimilarListAdapter adapter;
     private String MOVIE_URL;
     MovieResponse.Result result = null;
+    static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_description);
 
         mImageQuality = getResources().getString(R.string.thumbnail_quality_6);
-
+        context = this;
         Intent intent = getIntent();
 
 
@@ -50,14 +56,17 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void setUpActivity(final MovieResponse.Result result) {
 
+        setupWindowAnimations();
 
         String image_url = getResources().getString(R.string.thumbnail_url);
 
-        Picasso.with(this).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.mainImageBackdrop);
-        binding.movieTitleTv.setText(result.getTitle());
+        Picasso.with(this).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
+        binding.headerLayout.movieTitleTv.setText(result.getTitle());
         binding.movieDescriptionTv.setText(result.getOverview());
-        binding.movieReleaseDateTv.setText(result.getReleaseDate());
-        binding.movieRatingTv.setText(result.getVoteAverage()+"");
+        binding.headerLayout.movieReleaseDateTv.setText(result.getReleaseDate());
+        binding.headerLayout.movieRatingTv.setText(result.getVoteAverage()+"");
+        binding.languageTv.setText(result.getOriginalLanguage());
+        binding.voteCountTv.setText(result.getVoteCount()+"");
 
         ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
@@ -73,8 +82,14 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
          /* Network setup and call */
         NetworkUtils.init(getApplicationContext());
-        NetworkUtils.getHttpResponseForSimilarMovies(MOVIE_URL+getResources().getString(R.string.api_key)+"&with_genres="+genre_ids);
+        NetworkUtils.getHttpResponseForSimilarMovies(result.getId());
     }
+
+
+
+
+
+    /* ---------------- Helper Methods ---------------- */
 
     private String getGenreIdList(List<Integer> list) {
         return list.toString();
@@ -86,4 +101,35 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         adapter.switchAdapter(response);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if(intent.hasExtra(getPackageName())) {
+
+            result = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
+        }
+    }
+
+    public static void setProgressVsisiblity(String flag) {
+        if(flag.equals(context.getResources().getString(R.string.network_request_started))) {
+            binding.loadingPb.setVisibility(View.VISIBLE);
+        }
+        else if(flag.equals(context.getResources().getString(R.string.network_request_finished))) {
+            binding.loadingPb.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ((MovieDescriptionActivity)context).overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+
+    private void setupWindowAnimations() {
+        Slide fade = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setEnterTransition(fade);
+        }
+    }
 }

@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
+import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
 
@@ -27,6 +30,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private MovieResponse mResponse;
     private Context mContext;
     private String mImageQuality;
+    private static BottomSheetFragment bottomSheetDialogFragment;
 
     private static final int LAYOUT_HEADER = 52456;
     private static final int LAYOUT_GRID = 84562;
@@ -125,6 +129,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     class MovieAdapterViewHolderHeader extends RecyclerView.ViewHolder{
 
         ImageView mThumbnail;
+        ImageButton mAdd;
 
         MovieAdapterViewHolderHeader(View itemView) {
             super(itemView);
@@ -133,6 +138,14 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     newActivity(getAdapterPosition());
+                }
+            });
+
+            mAdd = itemView.findViewById(R.id.add_to_list_ib);
+            mAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showBottomSheetDialog(v);
                 }
             });
         }
@@ -159,5 +172,19 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
         intent.putExtra(mContext.getPackageName(), bundle);
         mContext.startActivity(intent);
+
     }
+
+    public void showBottomSheetDialog(View v) {
+
+        bottomSheetDialogFragment = new BottomSheetFragment();
+        bottomSheetDialogFragment.show(((FragmentActivity)v.getContext()).getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+
+    }
+
+    public static void hideBottomSheetDialog(View v) {
+        bottomSheetDialogFragment.dismiss();
+    }
+
+
 }
