@@ -6,6 +6,7 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp"
     android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     android:background="@android:color/black">
 
 
@@ -14,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="@string/customization_label"
-        android:textColor="@color/colorPrimary"
+        android:textColor="#fff"
         android:textSize="16sp"
         android:textStyle="bold"
         android:id="@+id/settings_label"
@@ -92,6 +93,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:id="@+id/loader_pb"
+        android:theme="@style/PopularMovies.CircularProgress"
 
         app:layout_constraintStart_toEndOf="@id/apply_btn"
         app:layout_constraintEnd_toEndOf="parent"

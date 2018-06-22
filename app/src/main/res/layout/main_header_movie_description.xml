@@ -12,7 +12,7 @@
             android:id="@+id/main_image_backdrop"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/mobie_thumbnail_img"
             android:adjustViewBounds="true" />
 
@@ -41,9 +41,9 @@
                 android:layout_marginStart="16dp"
                 android:textColor="#5ed149"
 
-                app:layout_constraintStart_toEndOf="@id/movie_release_date_tv"
+                app:layout_constraintStart_toStartOf="@id/movie_title_tv"
                 app:layout_constraintTop_toBottomOf="@id/movie_title_tv"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
 
             <TextView
@@ -52,9 +52,9 @@
                 android:layout_height="wrap_content"
                 style="@style/PopularMovies.DetailMovie.MainImage.TextView"
 
-                app:layout_constraintStart_toStartOf="@id/movie_title_tv"
-                app:layout_constraintTop_toBottomOf="@id/movie_title_tv"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintStart_toEndOf="@id/movie_rating_tv"
+                app:layout_constraintTop_toTopOf="@id/movie_rating_tv"
+                app:layout_constraintBottom_toBottomOf="@id/movie_rating_tv" />
 
         </android.support.constraint.ConstraintLayout>
 

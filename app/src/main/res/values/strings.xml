@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PopularMovies</string>
+    <string name="app_name">AnFlix</string>
     <string name="mobie_thumbnail_img">mobie_thumbnail</string>
 
     <!-- MOVIE URLS -->
@@ -10,7 +10,6 @@
     <string name="url_for_upcoming">http://api.themoviedb.org/3/movie/upcoming?api_key=</string>
     <string name="url_for_now_playing">http://api.themoviedb.org/3/movie/now_playing?api_key=</string>
     <string name="url_for_latest">http://api.themoviedb.org/3/movie/latest?api_key=</string>
-    <string name="api_key">5d5b4588dc71d0e50c29f2caa9221fa0</string>
     <string name="thumbnail_url">http://image.tmdb.org/t/p/</string>
 
     <!-- IMAGE QUALITY -->
@@ -28,7 +27,7 @@
     <string name="apply_btn">Apply</string>
 
     <!-- LABELS FOR RADIOBUTTONS -->
-    <string name="top_rated_label">Top Rated</string>
+    <string name="top_rated_label">Highest Rated</string>
     <string name="most_popular_label">Most Popular</string>
     <string name="upcoming_label">Upcoming</string>
     <string name="latest_label">Latest</string>
@@ -36,10 +35,11 @@
 
 
     <string name="clear_selection">Clear All</string>
-    <string name="vote_count_label">Vote Count :</string>
+    <string name="vote_count_label">Number of People Voted :</string>
     <string name="language_label">Language :</string>
     <string name="network_request_started">started</string>
     <string name="network_request_finished">finished</string>
     <string name="customization_label">Customization</string>
+    <string name="sort_menu">Sort</string>
 
 </resources>

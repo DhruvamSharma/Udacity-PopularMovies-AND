@@ -1,5 +1,6 @@
 package com.dhruvam.popularmovies.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -91,5 +92,7 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
         intent.putExtra(mContext.getPackageName(), bundle);
         mContext.startActivity(intent);
+
+        ((Activity)mContext).overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
 }

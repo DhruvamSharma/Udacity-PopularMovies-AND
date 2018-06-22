@@ -106,6 +106,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/loading_pb"
                 android:visibility="visible"
+                android:theme="@style/PopularMovies.CircularProgress"
 
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

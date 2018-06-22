@@ -1,34 +1,37 @@
-package com.dhruvam.popularmovies;
+package com.dhruvam.popularmovies.activity;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.transition.Slide;
-import android.transition.TransitionInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
+import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
-public class MainActivity extends AppCompatActivity {
+public class MovieGridActivity extends AppCompatActivity {
 
 
     static MovieResponse mResponse;
     private static ActivityMainBinding mBinding;
     static MainGridAdapter adapter;
     static Context context;
+    private static BottomSheetFragment bottomSheetDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        setupWindowAnimations();
+
         context = this;
 
         /* Network setup and call */
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NetworkUtils.getHttpResponse();
 
         /* Setting up recycler View */
-        adapter = new MainGridAdapter(getApplicationContext());
+        adapter = new MainGridAdapter(this);
         GridLayoutManager manager = new GridLayoutManager(getApplicationContext(),3);
 
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -57,16 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /* -------- HELPER METHODS --------- */
+
     public static void receiveData(MovieResponse response) {
         mResponse = response;
         adapter.switchAdapter(response);
-    }
-
-    private void setupWindowAnimations() {
-        Slide slide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setExitTransition(slide);
-        }
     }
 
     public static void setLoadingScreenVisibility(String flag) {
@@ -82,6 +81,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filter, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()) {
+            case R.id.sort_menu: {
+                showBottomSheetDialog(BottomSheetFragment.getContextForSheet());
+                return true;
+            }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void showBottomSheetDialog(View v) {
+        bottomSheetDialogFragment =  new BottomSheetFragment();
+        bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+
+    }
+
+    public static void hideBottomSheetDialog(View v) {
+        bottomSheetDialogFragment.dismiss();
+    }
 }

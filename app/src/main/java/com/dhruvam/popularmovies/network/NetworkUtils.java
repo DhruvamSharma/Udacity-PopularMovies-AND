@@ -7,7 +7,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.dhruvam.popularmovies.BuildConfig;
-import com.dhruvam.popularmovies.MainActivity;
+import com.dhruvam.popularmovies.activity.MovieGridActivity;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
@@ -36,7 +36,7 @@ public class NetworkUtils {
 
     public static void getHttpResponse() {
 
-        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
+        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
 
         AndroidNetworking.get(MOVIE_URL+API_Key)
                 .setTag("test")
@@ -45,17 +45,17 @@ public class NetworkUtils {
                 .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
                     public void onResponse(MovieResponse response) {
-                        //MainActivity.hideLoading();
+                        //MovieGridActivity.hideLoading();
                         mResponse[0] = response;
-                        MainActivity.receiveData(mResponse[0]);
-                        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                        MovieGridActivity.receiveData(mResponse[0]);
+                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                     }
 
                     @Override
                     public void onError(ANError anError) {
                         /* handle error situation */
                         mResponse[0] = null;
-                        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                     }
 
                 });
@@ -92,7 +92,7 @@ public class NetworkUtils {
     public static void getHTTPResponseForSorted(String tag) {
 
         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_started));
-        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
+        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
 
         String movie_url = null;
         if( tag.equals(mContext.getResources().getString(R.string.top_rated_label))) {
@@ -115,8 +115,8 @@ public class NetworkUtils {
                     @Override
                     public void onResponse(MovieResponse response) {
                         mResponse[0] = response;
-                        MainActivity.receiveData(mResponse[0]);
-                        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                        MovieGridActivity.receiveData(mResponse[0]);
+                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
                         BottomSheetFragment.hideBottomSheet(BottomSheetFragment.getContextForSheet());
                     }
@@ -126,7 +126,7 @@ public class NetworkUtils {
                         /* handle error situation */
                         mResponse[0] = null;
                         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
-                        MainActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                         BottomSheetFragment.hideBottomSheet(BottomSheetFragment.getContextForSheet());
                     }
                 });

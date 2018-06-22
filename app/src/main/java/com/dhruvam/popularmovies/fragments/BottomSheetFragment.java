@@ -13,7 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.dhruvam.popularmovies.R;
-import com.dhruvam.popularmovies.adapter.MainGridAdapter;
+import com.dhruvam.popularmovies.activity.MovieGridActivity;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 
 /**
@@ -25,8 +25,13 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     static View view;
     static ProgressBar progressBar;
 
-    static BottomSheetDialogFragment newInstance() {
-        return new BottomSheetDialogFragment();
+    public BottomSheetFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -75,8 +80,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             public void onClick(View v) {
                 if (query_parameter[0] == null) {
                     hideBottomSheet(v);
+                } else {
+                    NetworkUtils.getHTTPResponseForSorted(query_parameter[0]);
                 }
-                NetworkUtils.getHTTPResponseForSorted(query_parameter[0]);
+
 
             }
         });
@@ -84,6 +91,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 radioGroup.clearCheck();
+                query_parameter[0] = null;
                 NetworkUtils.getHttpResponse();
             }
         });
@@ -100,7 +108,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     public static void hideBottomSheet(View v) {
-        MainGridAdapter.hideBottomSheetDialog(v);
+        MovieGridActivity.hideBottomSheetDialog(v);
     }
 
     public static View getContextForSheet() {

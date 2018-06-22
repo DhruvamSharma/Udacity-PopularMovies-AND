@@ -3,12 +3,11 @@ package com.dhruvam.popularmovies.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.transition.Slide;
-import android.transition.TransitionInflater;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.dhruvam.popularmovies.R;
@@ -20,8 +19,6 @@ import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
-
-import java.util.List;
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
@@ -56,7 +53,6 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void setUpActivity(final MovieResponse.Result result) {
 
-        setupWindowAnimations();
 
         String image_url = getResources().getString(R.string.thumbnail_url);
 
@@ -70,15 +66,14 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
         ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
-        GridLayoutManager manager = new GridLayoutManager(getApplicationContext(), 3);
-        adapter = new SimilarListAdapter(getApplicationContext());
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
+        adapter = new SimilarListAdapter(this);
         binding.similarListRv.setLayoutManager(manager);
         binding.similarListRv.setAdapter(adapter);
 
         /* setting upbase URL */
         MOVIE_URL = getResources().getString(R.string.base_url);
 
-        String genre_ids = getGenreIdList(result.getGenreIds());
 
          /* Network setup and call */
         NetworkUtils.init(getApplicationContext());
@@ -91,9 +86,6 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     /* ---------------- Helper Methods ---------------- */
 
-    private String getGenreIdList(List<Integer> list) {
-        return list.toString();
-    }
 
 
     public static void receiveData(MovieResponse response) {
@@ -105,10 +97,12 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
+        Log.e("here","here");
         if(intent.hasExtra(getPackageName())) {
 
             result = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
         }
+        setUpActivity(result);
     }
 
     public static void setProgressVsisiblity(String flag) {
@@ -123,13 +117,21 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        ((MovieDescriptionActivity)context).overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+        overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
     }
 
-    private void setupWindowAnimations() {
-        Slide fade = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(fade);
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home :
+                startActivity(new Intent(MovieDescriptionActivity.this, MovieGridActivity.class));
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+
     }
 }
