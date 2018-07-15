@@ -41,5 +41,6 @@
     <string name="network_request_finished">finished</string>
     <string name="customization_label">Customization</string>
     <string name="sort_menu">Sort</string>
+    <string name="add_to_favourites">Add to Favourites</string>
 
 </resources>
