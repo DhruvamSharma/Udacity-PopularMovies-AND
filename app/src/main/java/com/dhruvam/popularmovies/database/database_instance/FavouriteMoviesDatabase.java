@@ -7,8 +7,9 @@ import android.content.Context;
 
 import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
+import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 
-@Database(entities = {FavouriteMovieEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {MovieResponseEntity.Result.class}, version = 2, exportSchema = false)
 public abstract class FavouriteMoviesDatabase extends RoomDatabase {
 
     private static FavouriteMoviesDatabase sDatabase;

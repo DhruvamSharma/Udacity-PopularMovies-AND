@@ -18,14 +18,15 @@ import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.network.NetworkUtils;
-import com.dhruvam.popularmovies.pojo.MovieResponse;
+import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieGridActivity extends AppCompatActivity {
 
 
-    static MovieResponse mResponse;
+    static MovieResponseEntity mResponse;
     private static ActivityMainBinding mBinding;
     static MainGridAdapter adapter;
     static Context context;
@@ -66,29 +67,14 @@ public class MovieGridActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
     /* -------- HELPER METHODS --------- */
-
-
-    /* Utitlity Methods */
-
-    public static void receiveData(MovieResponse response) {
-        mResponse = response;
-        adapter.switchAdapter(response);
-    }
-
-    public static void setLoadingScreenVisibility(String flag) {
-        if(flag.equals(context.getResources().getString(R.string.network_request_started))) {
-            mBinding.movieListRv.setVisibility(View.GONE);
-            mBinding.shimmerText.setVisibility(View.VISIBLE);
-            mBinding.shimmerText.startShimmerAnimation();
-        }
-        else if(flag.equals(context.getResources().getString(R.string.network_request_finished))) {
-            mBinding.movieListRv.setVisibility(View.VISIBLE);
-            mBinding.shimmerText.setVisibility(View.GONE);
-            mBinding.shimmerText.stopShimmerAnimation();
-        }
-    }
-
 
     /* Menu Inflating and methods */
 
@@ -108,7 +94,8 @@ public class MovieGridActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.favourite_list : {
-                List<FavouriteMovieEntity> entityList = FavouriteMoviesDatabase.getDatabase(getApplicationContext()).moviesDao().getFavouriteMovieList();
+                //On click of Favourite Movies
+                getAllFavourites();
             }
 
             default:
@@ -118,8 +105,53 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
 
-    /* BottomSheet Opening and Closing methods */
+    /* Utitlity Methods */
 
+    public static void receiveData(MovieResponseEntity response) {
+        mResponse = response;
+        adapter.switchAdapter(response);
+    }
+
+    /**
+     * Method to show or hide the skeleton loading screen that
+     * appears at the entry point
+     * @param flag
+     */
+    public static void setLoadingScreenVisibility(String flag) {
+        if(flag.equals(context.getResources().getString(R.string.network_request_started))) {
+            mBinding.movieListRv.setVisibility(View.GONE);
+            mBinding.shimmerText.setVisibility(View.VISIBLE);
+            mBinding.shimmerText.startShimmerAnimation();
+        }
+        else if(flag.equals(context.getResources().getString(R.string.network_request_finished))) {
+            mBinding.movieListRv.setVisibility(View.VISIBLE);
+            mBinding.shimmerText.setVisibility(View.GONE);
+            mBinding.shimmerText.stopShimmerAnimation();
+        }
+    }
+
+
+    /**
+     * getAllFavourites method to get the favourites movies
+     * and then calling the switch adapter method to change the data in the activity
+     */
+    public void getAllFavourites() {
+
+        List<MovieResponseEntity.Result> entityList = FavouriteMoviesDatabase.getDatabase(getApplicationContext()).moviesDao().getFavouriteMovieList();
+        MovieResponseEntity movieResponseEntity = new MovieResponseEntity();
+        List<MovieResponseEntity.Result> results = new ArrayList<>();
+        results.addAll(entityList);
+        movieResponseEntity.setResults(results);
+        adapter.switchAdapter(movieResponseEntity);
+
+    }
+
+
+
+    /**
+     *  BottomSheet Opening and Closing methods
+     *  @param v
+     */
     public void showBottomSheetDialog(View v) {
         bottomSheetDialogFragment =  new BottomSheetFragment();
         bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());

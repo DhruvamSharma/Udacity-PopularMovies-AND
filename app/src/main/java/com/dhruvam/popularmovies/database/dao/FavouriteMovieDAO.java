@@ -6,16 +6,17 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
+import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 
 import java.util.List;
 @Dao
 public interface FavouriteMovieDAO {
 
     @Query("SELECT * from favourite_movies")
-    public List<FavouriteMovieEntity> getFavouriteMovieList();
+    List<MovieResponseEntity.Result> getFavouriteMovieList();
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void addMovie(FavouriteMovieEntity movie);
+    void addMovie(MovieResponseEntity.Result movie);
 
 }

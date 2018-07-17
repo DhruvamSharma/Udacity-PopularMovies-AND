@@ -1,6 +1,8 @@
-package com.dhruvam.popularmovies.pojo;
+package com.dhruvam.popularmovies.database.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +15,7 @@ import java.util.List;
  * Created by dell on 05-06-2018.
  */
 
-public class MovieResponse {
+public class MovieResponseEntity {
 
     @SerializedName("page")
     @Expose
@@ -61,10 +63,12 @@ public class MovieResponse {
     }
 
     @Parcel
+    @Entity (tableName = "favourite_movies")
     public static class Result{
         @SerializedName("vote_count")
         @Expose
         Integer voteCount;
+        @PrimaryKey
         @SerializedName("id")
         @Expose
         Integer id;
@@ -89,6 +93,7 @@ public class MovieResponse {
         @SerializedName("original_title")
         @Expose
         String originalTitle;
+        @Ignore
         @SerializedName("genre_ids")
         @Expose
         List<Integer> genreIds = null;

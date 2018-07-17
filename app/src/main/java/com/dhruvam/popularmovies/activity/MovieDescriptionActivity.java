@@ -12,12 +12,11 @@ import android.view.View;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
-import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
 import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
+import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
 import com.dhruvam.popularmovies.network.NetworkUtils;
-import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.squareup.picasso.Picasso;
 
@@ -28,10 +27,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     private static ActivityMovieDescriptionBinding binding;
     String mImageQuality;
     private static final int MAX_LINES =2;
-    static MovieResponse mResponse;
+    static MovieResponseEntity mResponse;
     static SimilarListAdapter adapter;
     private String MOVIE_URL;
-    MovieResponse.Result result = null;
+    MovieResponseEntity.Result result = null;
     static Context context;
 
     @Override
@@ -43,7 +42,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         context = this;
         Intent intent = getIntent();
 
-
+        //Extracting movie result from the intent from MovieGridActivity
         if(intent.hasExtra(getPackageName())) {
 
             result = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
@@ -54,7 +53,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     }
 
-    private void setUpActivity(final MovieResponse.Result result) {
+    private void setUpActivity(final MovieResponseEntity.Result result) {
 
 
         String image_url = getResources().getString(R.string.thumbnail_url);
@@ -95,9 +94,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     /* button to add a movie to favourites database */
     public void addToFavourites() {
-
-        FavouriteMovieEntity entity = new FavouriteMovieEntity(result.getId(), result.getTitle(), result.getOverview(), result.getPopularity(), result.getOriginalLanguage(), result.getReleaseDate());
-        FavouriteMoviesDatabase.getDatabase(this).moviesDao().addMovie(entity);
+        //Acquiring database instance and passing context.
+        //Then through the abstract method moviesDAO(), adding a movie on button click.
+        FavouriteMoviesDatabase.getDatabase(this).moviesDao().addMovie(result);
 
     }
 
@@ -109,7 +108,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
-    public static void receiveData(MovieResponse response) {
+    public static void receiveData(MovieResponseEntity response) {
         mResponse = response;
         adapter.switchAdapter(response);
     }

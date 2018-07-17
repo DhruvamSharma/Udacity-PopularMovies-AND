@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
-import com.dhruvam.popularmovies.pojo.MovieResponse;
+import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -25,7 +25,7 @@ import org.parceler.Parcels;
 
 public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private MovieResponse mResponse;
+    private MovieResponseEntity mResponse;
     private Context mContext;
     private String mImageQuality;
 
@@ -40,7 +40,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mImageQuality = mContext.getResources().getString(R.string.thumbnail_quality_3);
     }
 
-    public MainGridAdapter(MovieResponse response) {
+    public MainGridAdapter(MovieResponseEntity response) {
         mResponse = response;
     }
 
@@ -53,13 +53,11 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch(viewType) {
             case LAYOUT_HEADER:
                 View view_header = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_thumbnail, parent,false);
-                holder = new MovieAdapterViewHolderHeader(view_header);
-                break;
+                return new MovieAdapterViewHolderHeader(view_header);
 
             case LAYOUT_GRID:
                 View view_grid = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_grid_thumbnail, parent,false);
-                holder = new MovieAdapterViewHolderGrid(view_grid);
-                break;
+                return new MovieAdapterViewHolderGrid(view_grid);
 
             /* Something to do with the default case */
         }
@@ -146,11 +144,20 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     /* Helper Methods */
 
-    public void switchAdapter(MovieResponse response) {
+    /**
+     * Switch adapter method to change the data of the MovieGridActivity
+     * @param response
+     */
+    public void switchAdapter(MovieResponseEntity response) {
         mResponse = response;
         notifyDataSetChanged();
     }
 
+    /**
+     * newActivity method that bundles the data of a single movie and
+     * starts MovieDescriptionActivity for a detailed view
+     * @param position
+     */
     private void newActivity(int position) {
 
         /* Parcelable code */
