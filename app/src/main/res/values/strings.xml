@@ -42,5 +42,6 @@
     <string name="customization_label">Customization</string>
     <string name="sort_menu">Sort</string>
     <string name="add_to_favourites">Add to Favourites</string>
+    <string name="favourite_movie_label">Favourite Movies</string>
 
 </resources>

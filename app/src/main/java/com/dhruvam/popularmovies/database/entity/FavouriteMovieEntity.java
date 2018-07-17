@@ -8,6 +8,15 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "favourite_movies")
 public class FavouriteMovieEntity {
 
+    public FavouriteMovieEntity(int movieId, String movieName, String description, double rating, String language, String date) {
+        this.movieId = movieId;
+        this.date = date;
+        this.movieName = movieName;
+        this.description = description;
+        this.rating = rating;
+        this.language = language;
+    }
+
     @PrimaryKey
     @ColumnInfo(name = "movie_id")
     private int movieId;
@@ -17,7 +26,7 @@ public class FavouriteMovieEntity {
 
     private String description;
 
-    private int rating;
+    private double rating;
 
     private String language;
 
@@ -47,7 +56,7 @@ public class FavouriteMovieEntity {
         this.description = description;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 

@@ -10,6 +10,8 @@ import com.dhruvam.popularmovies.BuildConfig;
 import com.dhruvam.popularmovies.activity.MovieGridActivity;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
+import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
+import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
@@ -105,6 +107,8 @@ public class NetworkUtils {
             movie_url = mContext.getResources().getString(R.string.url_for_latest);
         } else if (tag.equals(mContext.getResources().getString(R.string.now_playing_label))) {
             movie_url = mContext.getResources().getString(R.string.url_for_now_playing);
+        } else if( tag.equals(mContext.getResources().getString(R.string.favourite_movie_label))) {
+            FavouriteMoviesDatabase.getDatabase(mContext).moviesDao().getFavouriteMovieList();
         }
 
         AndroidNetworking.get(movie_url+API_Key)

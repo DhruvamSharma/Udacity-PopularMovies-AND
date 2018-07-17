@@ -58,6 +58,7 @@
             android:text="@string/now_playing_label"
             android:theme="@style/PopularMovies.BottomSheet.RadioButton"/>
 
+
     </RadioGroup>
     
     <Button

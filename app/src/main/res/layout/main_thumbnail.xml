@@ -23,7 +23,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/add_to_list_ib"
                 android:background="@drawable/ic_baseline_add"
-                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/play_btn"
                 app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +36,6 @@
                 android:drawableStart="@drawable/ic_baseline_play_arrow"
                 android:background="#fcfbfb"
                 android:drawablePadding="@dimen/cardview_default_elevation"
-                android:visibility="gone"
                 style="@style/PopularMovies.ButtonAppearance"
 
                 app:layout_constraintBottom_toBottomOf="@id/more_description_ib"
@@ -50,7 +48,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_outline_info_24px"
-                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@id/play_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

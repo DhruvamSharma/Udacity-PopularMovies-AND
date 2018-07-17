@@ -7,4 +7,9 @@
         android:orderInCategory="100"
         app:showAsAction="always"
         android:icon="@drawable/icon_sorting_24"/>
+    <item android:title="Fav."
+        android:id="@+id/favourite_list"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+
 </menu>

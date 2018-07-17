@@ -69,6 +69,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                     assert container != null;
                     query_parameter[0] = v.getContext().getResources().getString(R.string.now_playing_label);
                 }
+
             }
         });
 

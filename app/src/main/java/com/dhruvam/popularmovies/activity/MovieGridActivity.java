@@ -9,13 +9,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
+import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
+import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
+
+import java.util.List;
 
 public class MovieGridActivity extends AppCompatActivity {
 
@@ -63,6 +68,9 @@ public class MovieGridActivity extends AppCompatActivity {
 
     /* -------- HELPER METHODS --------- */
 
+
+    /* Utitlity Methods */
+
     public static void receiveData(MovieResponse response) {
         mResponse = response;
         adapter.switchAdapter(response);
@@ -81,6 +89,9 @@ public class MovieGridActivity extends AppCompatActivity {
         }
     }
 
+
+    /* Menu Inflating and methods */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -96,11 +107,18 @@ public class MovieGridActivity extends AppCompatActivity {
                 showBottomSheetDialog(BottomSheetFragment.getContextForSheet());
                 return true;
             }
+            case R.id.favourite_list : {
+                List<FavouriteMovieEntity> entityList = FavouriteMoviesDatabase.getDatabase(getApplicationContext()).moviesDao().getFavouriteMovieList();
+            }
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+
+    /* BottomSheet Opening and Closing methods */
 
     public void showBottomSheetDialog(View v) {
         bottomSheetDialogFragment =  new BottomSheetFragment();

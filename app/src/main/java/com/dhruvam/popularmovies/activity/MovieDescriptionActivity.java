@@ -12,6 +12,9 @@ import android.view.View;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
+import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
+import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
+import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
@@ -64,12 +67,20 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         binding.languageTv.setText(result.getOriginalLanguage());
         binding.voteCountTv.setText(result.getVoteCount()+"");
 
+        /* expandable textview */
         ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         adapter = new SimilarListAdapter(this);
         binding.similarListRv.setLayoutManager(manager);
         binding.similarListRv.setAdapter(adapter);
+        binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addToFavourites();
+            }
+        });
+
 
         /* setting upbase URL */
         MOVIE_URL = getResources().getString(R.string.base_url);
@@ -81,7 +92,12 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     }
 
 
+
+    /* button to add a movie to favourites database */
     public void addToFavourites() {
+
+        FavouriteMovieEntity entity = new FavouriteMovieEntity(result.getId(), result.getTitle(), result.getOverview(), result.getPopularity(), result.getOriginalLanguage(), result.getReleaseDate());
+        FavouriteMoviesDatabase.getDatabase(this).moviesDao().addMovie(entity);
 
     }
 

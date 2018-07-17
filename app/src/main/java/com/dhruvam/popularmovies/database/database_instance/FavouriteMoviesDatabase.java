@@ -1,11 +1,14 @@
 package com.dhruvam.popularmovies.database.database_instance;
 
+import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
 
+@Database(entities = {FavouriteMovieEntity.class}, version = 1, exportSchema = false)
 public abstract class FavouriteMoviesDatabase extends RoomDatabase {
 
     private static FavouriteMoviesDatabase sDatabase;
@@ -24,6 +27,8 @@ public abstract class FavouriteMoviesDatabase extends RoomDatabase {
         }
         return sDatabase;
     }
+
+    public abstract FavouriteMovieDAO moviesDao();
 
 
 }
