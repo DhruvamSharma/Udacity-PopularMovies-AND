@@ -13,6 +13,8 @@ import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
 import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
+import com.dhruvam.popularmovies.pojo.MovieReviews;
+import com.dhruvam.popularmovies.pojo.MovieTrailors;
 
 /**
  * Created by dell on 05-06-2018.
@@ -35,6 +37,10 @@ public class NetworkUtils {
         API_Key = BuildConfig.API_KEY;
     }
 
+    /**
+     * his method is used to generate list of movies to present on the first screen that
+     * user sees.
+     */
     public static void getHttpResponse() {
 
         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
@@ -63,6 +69,11 @@ public class NetworkUtils {
 
     }
 
+    /**
+     * This method returns a list of movies that are similar to the particular movie id
+     * This list of movie is shown in the MovieDescriptionActivity
+     * @param id
+     */
     public static void getHttpResponseForSimilarMovies(int id) {
 
         MovieDescriptionActivity.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_started));
@@ -75,7 +86,7 @@ public class NetworkUtils {
                     @Override
                     public void onResponse(MovieResponseEntity response) {
                         mResponse[0] = response;
-                        MovieDescriptionActivity.receiveData(mResponse[0]);
+                        MovieDescriptionActivity.receiveMovies(mResponse[0]);
                         MovieDescriptionActivity.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
                     }
 
@@ -90,6 +101,14 @@ public class NetworkUtils {
 
     }
 
+    /**
+     * This method generates a list of movies after the option from the
+     * Bottomsheet has been selected. There are various option for the
+     * different movie sorting options and so there are various urls for the same.
+     *
+     * For that particular url, this method returns a list of various movies.
+     * @param tag
+     */
     public static void getHTTPResponseForSorted(String tag) {
 
         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_started));
@@ -131,6 +150,55 @@ public class NetworkUtils {
                         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                         BottomSheetFragment.hideBottomSheet(BottomSheetFragment.getContextForSheet());
+                    }
+                });
+    }
+
+    /**
+     * This method recieves a movie id and search for the reviews of this
+     * particular movie
+     * @param movieId
+     */
+    public static void getReviewsForMovie(int movieId) {
+
+        String url = mContext.getResources().getString(R.string.url_for_similar_movies);
+        AndroidNetworking.get(url+movieId+"/reviews?api_key="+API_Key)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsObject(MovieReviews.class, new ParsedRequestListener<MovieReviews>() {
+                    @Override
+                    public void onResponse(MovieReviews response) {
+                        MovieDescriptionActivity.recieveReviews(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        /* handle error situation */
+                    }
+                });
+    }
+
+
+    /**
+     * This methods recieves a movie id and search for the trailors of that
+     * particular movie
+     * @param movieId
+     */
+    public static void getTrailorsForMovie(int movieId) {
+
+        String url = mContext.getResources().getString(R.string.url_for_similar_movies);
+        AndroidNetworking.get(url+movieId+"/videos?api_key="+API_Key)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsObject(MovieTrailors.class, new ParsedRequestListener<MovieTrailors>() {
+                    @Override
+                    public void onResponse(MovieTrailors response) {
+                        MovieDescriptionActivity.recieveTrailors(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        /* handle error situation */
                     }
                 });
     }

@@ -66,14 +66,6 @@ public class MovieGridActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
-
-
-
-
     /* -------- HELPER METHODS --------- */
 
     /* Menu Inflating and methods */
@@ -136,12 +128,15 @@ public class MovieGridActivity extends AppCompatActivity {
      * and then calling the switch adapter method to change the data in the activity
      */
     public void getAllFavourites() {
-
+        //Get list of movies
         List<MovieResponseEntity.Result> entityList = FavouriteMoviesDatabase.getDatabase(getApplicationContext()).moviesDao().getFavouriteMovieList();
+        //creating movie response object
         MovieResponseEntity movieResponseEntity = new MovieResponseEntity();
         List<MovieResponseEntity.Result> results = new ArrayList<>();
+        //adding movies data to the list
         results.addAll(entityList);
         movieResponseEntity.setResults(results);
+        //switching adapter to reset data in the activity
         adapter.switchAdapter(movieResponseEntity);
 
     }

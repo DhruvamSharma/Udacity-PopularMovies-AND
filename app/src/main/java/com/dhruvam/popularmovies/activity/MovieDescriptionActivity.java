@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
@@ -17,6 +18,8 @@ import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
 import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
 import com.dhruvam.popularmovies.network.NetworkUtils;
+import com.dhruvam.popularmovies.pojo.MovieReviews;
+import com.dhruvam.popularmovies.pojo.MovieTrailors;
 import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.squareup.picasso.Picasso;
 
@@ -88,6 +91,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
          /* Network setup and call */
         NetworkUtils.init(getApplicationContext());
         NetworkUtils.getHttpResponseForSimilarMovies(result.getId());
+
+        NetworkUtils.getReviewsForMovie(result.getId());
+        NetworkUtils.getTrailorsForMovie(result.getId());
     }
 
 
@@ -107,10 +113,31 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     /* ---------------- Helper Methods ---------------- */
 
 
-
-    public static void receiveData(MovieResponseEntity response) {
+    /**
+     * Recieve movie data from network request from NetworkUtils Class
+     * @param response
+     */
+    public static void receiveMovies(MovieResponseEntity response) {
         mResponse = response;
         adapter.switchAdapter(response);
+    }
+
+    /**
+     * Method called when the activity loads and
+     * Recieves MovieResponse for display
+     * @param reviews
+     */
+    public static void recieveReviews(MovieReviews reviews) {
+        Toast.makeText(context, reviews.toString(),Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Recieve trailors for the current movie displayed
+     * @param response
+     */
+    public static void recieveTrailors(MovieTrailors response) {
+
     }
 
     @Override
@@ -154,4 +181,5 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         }
 
     }
+
 }
