@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
-import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -25,7 +25,7 @@ import org.parceler.Parcels;
 
 public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private MovieResponseEntity mResponse;
+    private MovieResponse mResponse;
     private Context mContext;
     private String mImageQuality;
 
@@ -40,7 +40,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mImageQuality = mContext.getResources().getString(R.string.thumbnail_quality_3);
     }
 
-    public MainGridAdapter(MovieResponseEntity response) {
+    public MainGridAdapter(MovieResponse response) {
         mResponse = response;
     }
 
@@ -148,7 +148,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      * Switch adapter method to change the data of the MovieGridActivity
      * @param response
      */
-    public void switchAdapter(MovieResponseEntity response) {
+    public void switchAdapter(MovieResponse response) {
         mResponse = response;
         notifyDataSetChanged();
     }

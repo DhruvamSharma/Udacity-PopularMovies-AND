@@ -13,10 +13,11 @@ import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
-import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
-import com.dhruvam.popularmovies.database.entity.FavouriteMovieEntity;
-import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
+import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
+import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
+import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
@@ -30,10 +31,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     private static ActivityMovieDescriptionBinding binding;
     String mImageQuality;
     private static final int MAX_LINES =2;
-    static MovieResponseEntity mResponse;
+    static MovieResponse mResponse;
     static SimilarListAdapter adapter;
     private String MOVIE_URL;
-    MovieResponseEntity.Result result = null;
+    MovieResponse.Result result = null;
     static Context context;
 
     @Override
@@ -56,7 +57,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     }
 
-    private void setUpActivity(final MovieResponseEntity.Result result) {
+    private void setUpActivity(final MovieResponse.Result result) {
 
 
         String image_url = getResources().getString(R.string.thumbnail_url);
@@ -102,8 +103,30 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     public void addToFavourites() {
         //Acquiring database instance and passing context.
         //Then through the abstract method moviesDAO(), adding a movie on button click.
-        FavouriteMoviesDatabase.getDatabase(this).moviesDao().addMovie(result);
+        //FavouriteMovies movies = result;
+        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(result);
+            }
+        });
 
+
+    }
+
+
+    /**
+     * Deleting a movie from the database
+     * @param movie
+     */
+    public void deleteFromFavourites(final FavouriteMovies movie) {
+
+        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().deleteMovie(movie);
+            }
+        });
     }
 
 
@@ -117,7 +140,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
      * Recieve movie data from network request from NetworkUtils Class
      * @param response
      */
-    public static void receiveMovies(MovieResponseEntity response) {
+    public static void receiveMovies(MovieResponse response) {
         mResponse = response;
         adapter.switchAdapter(response);
     }

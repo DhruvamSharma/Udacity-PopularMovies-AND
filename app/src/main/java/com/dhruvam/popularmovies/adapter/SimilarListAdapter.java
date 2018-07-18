@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
-import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -25,7 +25,7 @@ import org.parceler.Parcels;
 
 public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.MovieAdapter> {
 
-    private MovieResponseEntity mResponse;
+    private MovieResponse mResponse;
     private String mImageQuality;
     private Context mContext;
 
@@ -75,7 +75,7 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
 
     /* Helper Methods */
 
-    public void switchAdapter(MovieResponseEntity response) {
+    public void switchAdapter(MovieResponse response) {
         mResponse = response;
         notifyDataSetChanged();
     }

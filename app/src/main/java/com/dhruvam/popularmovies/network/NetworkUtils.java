@@ -10,8 +10,7 @@ import com.dhruvam.popularmovies.BuildConfig;
 import com.dhruvam.popularmovies.activity.MovieGridActivity;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
-import com.dhruvam.popularmovies.database.database_instance.FavouriteMoviesDatabase;
-import com.dhruvam.popularmovies.database.entity.MovieResponseEntity;
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
@@ -25,7 +24,7 @@ public class NetworkUtils {
     private static String MOVIE_URL;
     private static String API_Key;
 
-    private static MovieResponseEntity[] mResponse = new MovieResponseEntity[1];
+    private static MovieResponse[] mResponse = new MovieResponse[1];
     private static Context mContext;
 
 
@@ -49,9 +48,9 @@ public class NetworkUtils {
                 .setTag("test")
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsObject(MovieResponseEntity.class, new ParsedRequestListener<MovieResponseEntity>() {
+                .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
-                    public void onResponse(MovieResponseEntity response) {
+                    public void onResponse(MovieResponse response) {
                         //MovieGridActivity.hideLoading();
                         mResponse[0] = response;
                         MovieGridActivity.receiveData(mResponse[0]);
@@ -82,9 +81,9 @@ public class NetworkUtils {
                 .setTag("test")
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsObject(MovieResponseEntity.class, new ParsedRequestListener<MovieResponseEntity>() {
+                .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
-                    public void onResponse(MovieResponseEntity response) {
+                    public void onResponse(MovieResponse response) {
                         mResponse[0] = response;
                         MovieDescriptionActivity.receiveMovies(mResponse[0]);
                         MovieDescriptionActivity.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
@@ -126,16 +125,16 @@ public class NetworkUtils {
         } else if (tag.equals(mContext.getResources().getString(R.string.now_playing_label))) {
             movie_url = mContext.getResources().getString(R.string.url_for_now_playing);
         } else if( tag.equals(mContext.getResources().getString(R.string.favourite_movie_label))) {
-            FavouriteMoviesDatabase.getDatabase(mContext).moviesDao().getFavouriteMovieList();
+            //FavouriteMoviesDatabase.getDatabase(mContext).getFavouritesDao().getFavouriteMovieList();
         }
 
         AndroidNetworking.get(movie_url+API_Key)
                 .setTag("test")
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsObject(MovieResponseEntity.class, new ParsedRequestListener<MovieResponseEntity>() {
+                .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
-                    public void onResponse(MovieResponseEntity response) {
+                    public void onResponse(MovieResponse response) {
                         mResponse[0] = response;
                         MovieGridActivity.receiveData(mResponse[0]);
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));

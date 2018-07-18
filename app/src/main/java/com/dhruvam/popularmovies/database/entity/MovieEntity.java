@@ -7,64 +7,11 @@ import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.parceler.Parcel;
-
 import java.util.List;
 
-/**
- * Created by dell on 05-06-2018.
- */
+@Entity(tableName = "offline_popular_movies")
+public class MovieEntity {
 
-public class MovieResponseEntity {
-
-    @SerializedName("page")
-    @Expose
-    private Integer page;
-    @SerializedName("total_results")
-    @Expose
-    private Integer totalResults;
-    @SerializedName("total_pages")
-    @Expose
-    private Integer totalPages;
-    @SerializedName("results")
-    @Expose
-    private List<Result> results = null;
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(Integer totalResults) {
-        this.totalResults = totalResults;
-    }
-
-    public Integer getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public List<Result> getResults() {
-        return results;
-    }
-
-    public void setResults(List<Result> results) {
-        this.results = results;
-    }
-
-    @Parcel
-    @Entity (tableName = "favourite_movies")
-    public static class Result{
         @SerializedName("vote_count")
         @Expose
         Integer voteCount;
@@ -223,7 +170,6 @@ public class MovieResponseEntity {
         }
 
 
-    }
 
 
 }
