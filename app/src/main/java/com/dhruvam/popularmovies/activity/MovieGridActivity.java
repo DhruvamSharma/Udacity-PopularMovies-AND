@@ -13,6 +13,7 @@ import android.view.View;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
+import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
 import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
@@ -20,6 +21,7 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MovieGridActivity extends AppCompatActivity {
@@ -128,27 +130,27 @@ public class MovieGridActivity extends AppCompatActivity {
      */
     public void getAllFavourites() {
         //Get list of movies
-        final ArrayList<List<MovieResponse.Result>> entityList = new ArrayList<List<MovieResponse.Result>>();
+
         AppExecutor.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                entityList.add(OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getFavouriteMovieList());
+
+                final List<FavouriteMovies> entityList = new ArrayList<>();
+                //final List<FavouriteMovies> synchronisedList = Collections.synchronizedList(entityList);
+                entityList.addAll(OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getFavouriteMovieList());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromData(entityList);
+                        MovieResponse response = new MovieResponse();
+                        response.setResults(list);
+                        adapter.switchAdapter(response);
+                    }
+                });
+
             }
         });
 
-        //creating movie response object
-        MovieResponse movieResponse = new MovieResponse();
-        List<MovieResponse.Result> results = new ArrayList<>();
-        //adding movies data to the list
-        if(entityList.size() != 0) {
-            entityList.get(0).addAll(results);
-            movieResponse.setResults(results);
-            //switching adapter to reset data in the activity
-            adapter.switchAdapter(movieResponse);
-        } else {
-            //TODO Handle empty screen here!
-            adapter.switchAdapter(null);
-        }
 
 
     }

@@ -26,6 +26,8 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.util.List;
+
 public class MovieDescriptionActivity extends AppCompatActivity {
 
     private static ActivityMovieDescriptionBinding binding;
@@ -98,16 +100,21 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     }
 
 
-
-    /* button to add a movie to favourites database */
+    /**
+     * Method for conversion of object model to data model and then passing to
+     * the favourite movie database.
+     */
     public void addToFavourites() {
         //Acquiring database instance and passing context.
         //Then through the abstract method moviesDAO(), adding a movie on button click.
         //FavouriteMovies movies = result;
+
+        final FavouriteMovies favouriteMovie = FavouriteMovies.getDataModelFromObject(result);
+
         AppExecutor.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(result);
+                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(favouriteMovie);
             }
         });
 

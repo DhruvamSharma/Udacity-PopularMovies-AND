@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +13,47 @@ import java.util.List;
 @Entity(tableName = "favourite_movies")
 public class FavouriteMovies {
 
-        @SerializedName("vote_count")
+    /**
+     * constructorfor Model conversion
+     * @param voteCount
+     * @param id
+     * @param video
+     * @param voteAverage
+     * @param title
+     * @param popularity
+     * @param posterPath
+     * @param originalLanguage
+     * @param originalTitle
+     * @param genreIds
+     * @param backdropPath
+     * @param adult
+     * @param overview
+     * @param releaseDate
+     */
+    @Ignore
+    public FavouriteMovies(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title, Double popularity, String posterPath, String originalLanguage, String originalTitle, List<Integer> genreIds, String backdropPath, Boolean adult, String overview, String releaseDate) {
+        this.voteCount = voteCount;
+        this.id = id;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.genreIds = genreIds;
+        this.backdropPath = backdropPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
+
+
+    public FavouriteMovies() {
+
+    }
+
+    @SerializedName("vote_count")
         @Expose
         Integer voteCount;
         @PrimaryKey
@@ -170,5 +211,15 @@ public class FavouriteMovies {
         }
 
 
+    /**
+     * A method to convert Data Model to Object Model.
+     * @param result
+     * @return favouriteMovie
+     */
+    @Ignore
+    public static FavouriteMovies getDataModelFromObject(MovieResponse.Result result) {
+            FavouriteMovies favouriteMovie = new FavouriteMovies(result.getVoteCount(), result.getId(), result.getVideo(), result.getVoteAverage(), result.getTitle(), result.getPopularity(), result.getPosterPath(), result.getOriginalLanguage(), result.getOriginalTitle(), result.getGenreIds(), result.getBackdropPath(), result.getAdult(), result.getOverview(), result.getReleaseDate());
+            return favouriteMovie;
 
+    }
 }

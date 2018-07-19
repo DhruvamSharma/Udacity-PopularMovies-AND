@@ -17,7 +17,7 @@ public abstract class OfflineMovieAccessDatabase extends RoomDatabase{
     private static final String DATABASE_NAME = "popular_movies_db";
     private static OfflineMovieAccessDatabase sDatabase;
 
-    private OfflineMovieAccessDatabase() {
+    OfflineMovieAccessDatabase() {
 
     }
 

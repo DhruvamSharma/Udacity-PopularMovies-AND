@@ -4,11 +4,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,6 +66,45 @@ public class MovieResponse {
 
     @Parcel
     public static class Result{
+
+        /**
+         * Constructor for model conversion
+         * @param voteCount
+         * @param id
+         * @param video
+         * @param voteAverage
+         * @param title
+         * @param popularity
+         * @param posterPath
+         * @param originalLanguage
+         * @param originalTitle
+         * @param genreIds
+         * @param backdropPath
+         * @param adult
+         * @param overview
+         * @param releaseDate
+         */
+        public Result(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title, Double popularity, String posterPath, String originalLanguage, String originalTitle, List<Integer> genreIds, String backdropPath, Boolean adult, String overview, String releaseDate) {
+            this.voteCount = voteCount;
+            this.id = id;
+            this.video = video;
+            this.voteAverage = voteAverage;
+            this.title = title;
+            this.popularity = popularity;
+            this.posterPath = posterPath;
+            this.originalLanguage = originalLanguage;
+            this.originalTitle = originalTitle;
+            this.genreIds = genreIds;
+            this.backdropPath = backdropPath;
+            this.adult = adult;
+            this.overview = overview;
+            this.releaseDate = releaseDate;
+        }
+
+        public Result() {
+
+        }
+
         @SerializedName("vote_count")
         @Expose
         Integer voteCount;
@@ -218,6 +259,17 @@ public class MovieResponse {
 
         public void setReleaseDate(String releaseDate) {
             this.releaseDate = releaseDate;
+        }
+
+        @Ignore
+        public static List<Result> getObjectModelFromData(List<FavouriteMovies> list) {
+
+            List<Result> results = new ArrayList<>();
+            for (FavouriteMovies movie : list) {
+                results.add(new MovieResponse.Result(movie.getVoteCount(), movie.getId(), movie.getVideo(), movie.getVoteAverage(), movie.getTitle(), movie.getPopularity(), movie.getPosterPath(), movie.getOriginalLanguage(), movie.getOriginalTitle(), movie.getGenreIds(), movie.getBackdropPath(), movie.getAdult() ,movie.getOverview(), movie.getReleaseDate()));
+            }
+
+            return results;
         }
 
 
