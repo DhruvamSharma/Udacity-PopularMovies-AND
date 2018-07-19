@@ -5,6 +5,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
+import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -262,7 +263,7 @@ public class MovieResponse {
         }
 
         @Ignore
-        public static List<Result> getObjectModelFromData(List<FavouriteMovies> list) {
+        public static List<Result> getObjectModelFromFavouritesData(List<FavouriteMovies> list) {
 
             List<Result> results = new ArrayList<>();
             for (FavouriteMovies movie : list) {
@@ -272,7 +273,15 @@ public class MovieResponse {
             return results;
         }
 
+        @Ignore
+        public static List<Result> getObjectModelFromAllMoviesData(List<MovieEntity> list) {
+            List<Result> results = new ArrayList<>();
+            for (MovieEntity movie : list) {
+                results.add(new MovieResponse.Result(movie.getVoteCount(), movie.getId(), movie.getVideo(), movie.getVoteAverage(), movie.getTitle(), movie.getPopularity(), movie.getPosterPath(), movie.getOriginalLanguage(), movie.getOriginalTitle(), movie.getGenreIds(), movie.getBackdropPath(), movie.getAdult() ,movie.getOverview(), movie.getReleaseDate()));
+            }
 
+            return results;
+        }
     }
 
 

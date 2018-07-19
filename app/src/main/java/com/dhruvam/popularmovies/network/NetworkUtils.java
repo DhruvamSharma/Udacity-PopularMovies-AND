@@ -1,6 +1,7 @@
 package com.dhruvam.popularmovies.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -10,6 +11,9 @@ import com.dhruvam.popularmovies.BuildConfig;
 import com.dhruvam.popularmovies.activity.MovieGridActivity;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
+import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
+import com.dhruvam.popularmovies.database.entity.MovieEntity;
+import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
@@ -23,7 +27,6 @@ public class NetworkUtils {
 
     private static String MOVIE_URL;
     private static String API_Key;
-
     private static MovieResponse[] mResponse = new MovieResponse[1];
     private static Context mContext;
 
@@ -50,17 +53,35 @@ public class NetworkUtils {
                 .build()
                 .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
-                    public void onResponse(MovieResponse response) {
+                    public void onResponse(final MovieResponse response) {
                         //MovieGridActivity.hideLoading();
-                        mResponse[0] = response;
-                        MovieGridActivity.receiveData(mResponse[0]);
-                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                        //mResponse[0] = response;
+
+                        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                OfflineMovieAccessDatabase.getInstance(mContext).getMovieDao().addAllMovies(MovieEntity.getDataModelListFromObject(response.getResults()));
+                                Log.e(mContext.getPackageName(), "error might be here");
+                                AppExecutor.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                                    }
+                                });
+
+                            }
+                        });
+
+
+                        //MovieGridActivity.receiveData(mResponse[0]);
+
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        /* handle error situation */
-                        mResponse[0] = null;
+                        //TODO (2) Handle Error condition here.
+                        //mResponse[0] = null;
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                     }
 

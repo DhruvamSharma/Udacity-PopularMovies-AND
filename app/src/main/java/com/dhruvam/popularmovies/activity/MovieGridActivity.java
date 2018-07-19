@@ -1,10 +1,12 @@
 package com.dhruvam.popularmovies.activity;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.MainGridAdapter;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
+import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
 import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
@@ -21,7 +24,6 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MovieGridActivity extends AppCompatActivity {
@@ -40,11 +42,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
         context = this;
-
-        /* Network setup and call */
-        NetworkUtils.init(this);
-        NetworkUtils.getHttpResponse();
-
+        fetchMovieList();
         /* Setting up recycler View */
         adapter = new MainGridAdapter(this);
         GridLayoutManager manager = new GridLayoutManager(getApplicationContext(),3);
@@ -66,6 +64,34 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(getPackageName(), "data from database");
+        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final MovieResponse response = new MovieResponse();
+                List<MovieEntity> list = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getMovieDao().getAllMovies();
+                response.setResults(MovieResponse.Result.getObjectModelFromAllMoviesData(list));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.switchAdapter(response);
+                    }
+                });
+            }
+        });
+
+    }
+
+
+
+
+
+
+
 
     /* -------- HELPER METHODS --------- */
 
@@ -105,6 +131,13 @@ public class MovieGridActivity extends AppCompatActivity {
         adapter.switchAdapter(response);
     }
 
+
+    public void fetchMovieList() {
+        /* Network setup and call */
+        NetworkUtils.init(this);
+        NetworkUtils.getHttpResponse();
+    }
+
     /**
      * Method to show or hide the skeleton loading screen that
      * appears at the entry point
@@ -141,7 +174,7 @@ public class MovieGridActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromData(entityList);
+                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(entityList);
                         MovieResponse response = new MovieResponse();
                         response.setResults(list);
                         adapter.switchAdapter(response);
@@ -154,6 +187,8 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
     }
+
+
 
 
 

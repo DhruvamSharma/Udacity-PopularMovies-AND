@@ -4,15 +4,39 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "offline_popular_movies")
 public class MovieEntity {
 
-        @SerializedName("vote_count")
+    @Ignore
+    public MovieEntity(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title, Double popularity, String posterPath, String originalLanguage, String originalTitle, List<Integer> genreIds, String backdropPath, Boolean adult, String overview, String releaseDate) {
+        this.voteCount = voteCount;
+        this.id = id;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.genreIds = genreIds;
+        this.backdropPath = backdropPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
+
+    public MovieEntity() {
+
+    }
+
+    @SerializedName("vote_count")
         @Expose
         Integer voteCount;
         @PrimaryKey
@@ -169,5 +193,13 @@ public class MovieEntity {
             this.releaseDate = releaseDate;
         }
 
-
+    @Ignore
+    public static List<MovieEntity> getDataModelListFromObject(List<MovieResponse.Result> results) {
+        List<MovieEntity> list = new ArrayList<>();
+        for (MovieResponse.Result result : results) {
+            MovieEntity movie = new MovieEntity(result.getVoteCount(), result.getId(), result.getVideo(), result.getVoteAverage(), result.getTitle(), result.getPopularity(), result.getPosterPath(), result.getOriginalLanguage(), result.getOriginalTitle(), result.getGenreIds(), result.getBackdropPath(), result.getAdult(), result.getOverview(), result.getReleaseDate());
+            list.add(movie);
+        }
+        return list;
+    }
 }
