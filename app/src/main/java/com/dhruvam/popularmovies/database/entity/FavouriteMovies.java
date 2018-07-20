@@ -223,5 +223,16 @@ public class FavouriteMovies {
 
     }
 
+    /**
+     * A method to convert Object Model to Data Model.
+     * @param result
+     * @return favouriteMovie
+     */
+    @Ignore
+    public static FavouriteMovies getObjectModelFromData(MovieEntity result) {
+        FavouriteMovies favouriteMovie = new FavouriteMovies(result.getVoteCount(), result.getId(), result.getVideo(), result.getVoteAverage(), result.getTitle(), result.getPopularity(), result.getPosterPath(), result.getOriginalLanguage(), result.getOriginalTitle(), result.getGenreIds(), result.getBackdropPath(), result.getAdult(), result.getOverview(), result.getReleaseDate());
+        return favouriteMovie;
+    }
+
 
 }

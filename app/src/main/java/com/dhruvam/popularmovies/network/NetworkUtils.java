@@ -160,7 +160,7 @@ public class NetworkUtils {
                         MovieGridActivity.receiveData(mResponse[0]);
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
-                        BottomSheetFragment.hideBottomSheet(BottomSheetFragment.getContextForSheet());
+                        BottomSheetFragment.hideBottomSheet();
                     }
 
                     @Override
@@ -169,7 +169,7 @@ public class NetworkUtils {
                         mResponse[0] = null;
                         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
-                        BottomSheetFragment.hideBottomSheet(BottomSheetFragment.getContextForSheet());
+                        BottomSheetFragment.hideBottomSheet();
                     }
                 });
     }

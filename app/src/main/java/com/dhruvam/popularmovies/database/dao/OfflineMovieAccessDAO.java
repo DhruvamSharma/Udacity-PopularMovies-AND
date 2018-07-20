@@ -20,4 +20,7 @@ public interface OfflineMovieAccessDAO {
     @Query("SELECT * FROM offline_popular_movies")
     LiveData<List<MovieEntity>> getAllMovies();
 
+    @Query("SELECT * FROM offline_popular_movies WHERE id = :id")
+    LiveData<MovieEntity> getMovieById(int id);
+
 }

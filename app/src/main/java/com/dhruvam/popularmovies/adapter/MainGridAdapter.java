@@ -160,15 +160,8 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      */
     private void newActivity(int position) {
 
-        /* Parcelable code */
-        Parcelable parcelable = Parcels.wrap(mResponse.getResults().get(position));
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(mContext.getPackageName(), parcelable);
-
-        /* Intent code */
-
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
-        intent.putExtra(mContext.getPackageName(), bundle);
+        intent.putExtra(mContext.getPackageName(), mResponse.getResults().get(position).getId());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
         ((Activity)mContext).overridePendingTransition(R.anim.activity_in, R.anim.activity_out);

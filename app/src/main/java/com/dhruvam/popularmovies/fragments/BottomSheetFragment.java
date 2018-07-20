@@ -25,6 +25,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     static View view;
     static ProgressBar progressBar;
 
+    private static BottomSheetFragment fragment;
+
     public BottomSheetFragment() {
         // Required empty public constructor
     }
@@ -33,6 +35,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
 
     @Nullable
     @Override
@@ -80,7 +83,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 if (query_parameter[0] == null) {
-                    hideBottomSheet(v);
+                    hideBottomSheet();
                 } else {
                     NetworkUtils.getHTTPResponseForSorted(query_parameter[0]);
                 }
@@ -108,12 +111,19 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         }
     }
 
-    public static void hideBottomSheet(View v) {
-        MovieGridActivity.hideBottomSheetDialog(v);
+    public static void hideBottomSheet() {
+        MovieGridActivity.hideBottomSheetDialog();
     }
 
     public static View getContextForSheet() {
         return view;
+    }
+
+    public static BottomSheetFragment getBottomSheetInstance() {
+        if(fragment == null) {
+            fragment = new BottomSheetFragment();
+        }
+        return fragment;
     }
 }
 

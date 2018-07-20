@@ -1,9 +1,13 @@
 package com.dhruvam.popularmovies.activity;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -15,6 +19,7 @@ import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
+import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
 import com.dhruvam.popularmovies.executor.AppExecutor;
@@ -22,10 +27,13 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
 import com.dhruvam.popularmovies.tools.ResizableCustomView;
+import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModel;
+import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDescriptionActivity extends AppCompatActivity {
@@ -36,8 +44,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     static MovieResponse mResponse;
     static SimilarListAdapter adapter;
     private String MOVIE_URL;
-    MovieResponse.Result result = null;
+    private int movieId;
     static Context context;
+    MovieEntity movieEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,55 +57,75 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         context = this;
         Intent intent = getIntent();
 
-        //Extracting movie result from the intent from MovieGridActivity
+        //Extracting movie movieId from the intent from MovieGridActivity
         if(intent.hasExtra(getPackageName())) {
 
-            result = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
+            movieId = intent.getIntExtra(getPackageName(), 0);
         }
 
-        setUpActivity(result);
+        setUpActivity(movieId);
 
 
     }
 
-    private void setUpActivity(final MovieResponse.Result result) {
+    private void setUpActivity(int movieId) {
 
+        final FavouriteMovieByIdViewModelFactory factory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(this), movieId);
+        final FavouriteMovieByIdViewModel model = ViewModelProviders.of(this, factory).get(FavouriteMovieByIdViewModel.class);
 
-        String image_url = getResources().getString(R.string.thumbnail_url);
-
-        Picasso.with(this).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
-        binding.headerLayout.movieTitleTv.setText(result.getTitle());
-        binding.movieDescriptionTv.setText(result.getOverview());
-        binding.headerLayout.movieReleaseDateTv.setText(result.getReleaseDate());
-        binding.headerLayout.movieRatingTv.setText(result.getVoteAverage()+"");
-        binding.languageTv.setText(result.getOriginalLanguage());
-        binding.voteCountTv.setText(result.getVoteCount()+"");
-
-        /* expandable textview */
-        ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
-
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
-        adapter = new SimilarListAdapter(this);
-        binding.similarListRv.setLayoutManager(manager);
-        binding.similarListRv.setAdapter(adapter);
-        binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+        final LiveData<MovieEntity> entity = model.getMovieById();
+        entity.observe(this, new Observer<MovieEntity>() {
             @Override
-            public void onClick(View view) {
-                addToFavourites();
+            public void onChanged(@Nullable MovieEntity result) {
+
+                //TODO (10) Activity is being created again and again on rotation even when there is ViewModel used
+                Log.e(getPackageName(), "calling description from database");
+                entity.removeObserver(this);
+
+                movieEntity = result;
+
+                String image_url = getResources().getString(R.string.thumbnail_url);
+                Picasso.with(getApplicationContext()).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
+                binding.headerLayout.movieTitleTv.setText(result.getTitle());
+                binding.movieDescriptionTv.setText(result.getOverview());
+                binding.headerLayout.movieReleaseDateTv.setText(result.getReleaseDate());
+                binding.headerLayout.movieRatingTv.setText(result.getVoteAverage()+"");
+                binding.languageTv.setText(result.getOriginalLanguage());
+                binding.voteCountTv.setText(result.getVoteCount()+"");
+
+                /* expandable textview */
+                ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
+
+                //TODO (9) Use this instead of ApplicationContext producing error. Why?
+                GridLayoutManager manager = new GridLayoutManager(getApplicationContext(), 3);
+                adapter = new SimilarListAdapter(getApplicationContext());
+                binding.similarListRv.setLayoutManager(manager);
+                binding.similarListRv.setAdapter(adapter);
+                binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addToFavourites();
+                    }
+                });
+
+
+                /* setting upbase URL */
+                MOVIE_URL = getResources().getString(R.string.base_url);
             }
         });
 
 
-        /* setting upbase URL */
-        MOVIE_URL = getResources().getString(R.string.base_url);
 
+
+
+        // TODO(12) Manage these calls and save them on the view model such that they are executed inside view model
 
          /* Network setup and call */
         NetworkUtils.init(getApplicationContext());
-        NetworkUtils.getHttpResponseForSimilarMovies(result.getId());
+        NetworkUtils.getHttpResponseForSimilarMovies(movieId);
 
-        NetworkUtils.getReviewsForMovie(result.getId());
-        NetworkUtils.getTrailorsForMovie(result.getId());
+        NetworkUtils.getReviewsForMovie(movieId);
+        NetworkUtils.getTrailorsForMovie(movieId);
     }
 
 
@@ -108,11 +137,11 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         //Acquiring database instance and passing context.
         //Then through the abstract method moviesDAO(), adding a movie on button click.
 
-        final FavouriteMovies favouriteMovie = FavouriteMovies.getDataModelFromObject(result);
 
         AppExecutor.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                FavouriteMovies favouriteMovie = FavouriteMovies.getObjectModelFromData(movieEntity);
                 OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(favouriteMovie);
             }
         });
@@ -176,9 +205,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         Log.e("here","here");
         if(intent.hasExtra(getPackageName())) {
 
-            result = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
+            movieId = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
         }
-        setUpActivity(result);
+        setUpActivity(movieId);
     }
 
     public static void setProgressVsisiblity(String flag) {
