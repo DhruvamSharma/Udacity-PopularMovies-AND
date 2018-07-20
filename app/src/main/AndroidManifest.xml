@@ -21,8 +21,7 @@
         </activity>
         <activity
             android:name=".activity.MovieDescriptionActivity"
-            android:parentActivityName=".activity.MovieGridActivity"
-            android:launchMode="singleTop">
+            android:parentActivityName=".activity.MovieGridActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dhruvam.popularmovies.activity.MovieGridActivity" />

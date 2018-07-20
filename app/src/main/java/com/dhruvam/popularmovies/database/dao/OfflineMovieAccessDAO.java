@@ -1,5 +1,6 @@
 package com.dhruvam.popularmovies.database.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -17,6 +18,6 @@ public interface OfflineMovieAccessDAO {
     public void addAllMovies(List<MovieEntity> resultList);
 
     @Query("SELECT * FROM offline_popular_movies")
-    public List<MovieEntity> getAllMovies();
+    public LiveData<List<MovieEntity>> getAllMovies();
 
 }

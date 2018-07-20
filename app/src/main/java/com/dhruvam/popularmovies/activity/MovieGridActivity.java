@@ -1,9 +1,11 @@
 package com.dhruvam.popularmovies.activity;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -61,26 +63,29 @@ public class MovieGridActivity extends AppCompatActivity {
 
         mBinding.movieListRv.setAdapter(adapter);
         mBinding.movieListRv.setLayoutManager(manager);
-
+        fetchFromDatabase();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+
+    }
+
+    private void fetchFromDatabase() {
+
+        // TODO (3) List mapping to different type of objects through Stream API
         Log.e(getPackageName(), "data from database");
-        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+        final MovieResponse response = new MovieResponse();
+        final LiveData<List<MovieEntity>> list = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getMovieDao().getAllMovies();
+        list.observe( this, new Observer<List<MovieEntity>>() {
             @Override
-            public void run() {
-                final MovieResponse response = new MovieResponse();
-                List<MovieEntity> list = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getMovieDao().getAllMovies();
-                response.setResults(MovieResponse.Result.getObjectModelFromAllMoviesData(list));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.switchAdapter(response);
-                    }
-                });
+            public void onChanged(@Nullable List<MovieEntity> movieEntities) {
+                Log.e(getPackageName(), " updated data from database");
+                response.setResults(MovieResponse.Result.getObjectModelFromAllMoviesData(movieEntities));
+                adapter.switchAdapter(response);
             }
         });
 
@@ -134,6 +139,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
     public void fetchMovieList() {
         /* Network setup and call */
+        Log.e(getPackageName(), "from network");
         NetworkUtils.init(this);
         NetworkUtils.getHttpResponse();
     }
@@ -171,10 +177,11 @@ public class MovieGridActivity extends AppCompatActivity {
                 final List<FavouriteMovies> entityList = new ArrayList<>();
                 //final List<FavouriteMovies> synchronisedList = Collections.synchronizedList(entityList);
                 entityList.addAll(OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getFavouriteMovieList());
+                final List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(entityList);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(entityList);
+
                         MovieResponse response = new MovieResponse();
                         response.setResults(list);
                         adapter.switchAdapter(response);
