@@ -1,5 +1,6 @@
 package com.dhruvam.popularmovies.database.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -15,7 +16,7 @@ import java.util.List;
 public interface FavouriteMovieDAO {
 
     @Query("SELECT * from favourite_movies")
-    List<FavouriteMovies> getFavouriteMovieList();
+    LiveData<List<FavouriteMovies>> getFavouriteMovieList();
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

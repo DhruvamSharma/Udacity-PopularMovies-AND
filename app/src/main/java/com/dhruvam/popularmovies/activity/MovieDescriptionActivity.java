@@ -107,7 +107,6 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     public void addToFavourites() {
         //Acquiring database instance and passing context.
         //Then through the abstract method moviesDAO(), adding a movie on button click.
-        //FavouriteMovies movies = result;
 
         final FavouriteMovies favouriteMovie = FavouriteMovies.getDataModelFromObject(result);
 

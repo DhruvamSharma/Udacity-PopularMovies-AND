@@ -20,12 +20,10 @@ import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDa
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
 import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.dhruvam.popularmovies.databinding.ActivityMainBinding;
-import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovieGridActivity extends AppCompatActivity {
@@ -168,31 +166,19 @@ public class MovieGridActivity extends AppCompatActivity {
      * and then calling the switch adapter method to change the data in the activity
      */
     public void getAllFavourites() {
-        //Get list of movies
-
-        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+        Log.e(getPackageName(), "fetching from database");
+        LiveData<List<FavouriteMovies>> listLiveData = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getFavouriteMovieList();
+        listLiveData.observe(this, new Observer<List<FavouriteMovies>>() {
             @Override
-            public void run() {
-
-                final List<FavouriteMovies> entityList = new ArrayList<>();
-                //final List<FavouriteMovies> synchronisedList = Collections.synchronizedList(entityList);
-                entityList.addAll(OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getFavouriteMovieList());
-                final List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(entityList);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        MovieResponse response = new MovieResponse();
-                        response.setResults(list);
-                        adapter.switchAdapter(response);
-                    }
-                });
-
+            public void onChanged(@Nullable List<FavouriteMovies> favouriteMovies) {
+                //TODO (4) Notice the change in the database when deleting out of the favourites
+                Log.e(getPackageName(), "fetching favourites from livedata");
+                List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
+                MovieResponse response = new MovieResponse();
+                response.setResults(list);
+                adapter.switchAdapter(response);
             }
         });
-
-
-
     }
 
 
