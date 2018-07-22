@@ -70,7 +70,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.light_transparent)));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
 
 
 

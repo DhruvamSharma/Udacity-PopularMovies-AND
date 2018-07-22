@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
@@ -21,9 +24,11 @@ import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
+import com.dhruvam.popularmovies.adapter.BottomSheetTabAdapter;
 import com.dhruvam.popularmovies.adapter.SimilarListAdapter;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
@@ -56,6 +61,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_description);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+
 
         mImageQuality = getResources().getString(R.string.thumbnail_quality_6);
         context = this;
@@ -96,6 +104,60 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(binding.trailerViewHolder.similarListRv);
 
 
+        assert binding.trailerReviewBs != null;
+        BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(binding.trailerReviewBs.bottomSheet);
+        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED: {
+                        //binding.trailerReviewBs.setText("Close Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                        //btnBottomSheet.setText("Expand Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+
+
+        binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Reviews"));
+        binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Star Cast"));
+        binding.trailerReviewBs.tabLayout.setTabGravity(binding.trailerReviewBs.tabLayout.GRAVITY_FILL);
+
+        PagerAdapter adapter = new BottomSheetTabAdapter(getSupportFragmentManager(), binding.trailerReviewBs.tabLayout.getTabCount());
+        binding.trailerReviewBs.pager.setAdapter(adapter);
+        binding.trailerReviewBs.pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener( binding.trailerReviewBs.tabLayout));
+        binding.trailerReviewBs.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                binding.trailerReviewBs.pager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
 
 
@@ -161,33 +223,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
                 //Picasso.with(context).load(image_url + mImageQuality + movieEntity.getPosterPath()).into(target);
 
-                BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(binding.trailerReviewBs);
-                sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                    @Override
-                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                        switch (newState) {
-                            case BottomSheetBehavior.STATE_HIDDEN:
-                                break;
-                            case BottomSheetBehavior.STATE_EXPANDED: {
-                                //binding.trailerReviewBs.setText("Close Sheet");
-                            }
-                            break;
-                            case BottomSheetBehavior.STATE_COLLAPSED: {
-                                //btnBottomSheet.setText("Expand Sheet");
-                            }
-                            break;
-                            case BottomSheetBehavior.STATE_DRAGGING:
-                                break;
-                            case BottomSheetBehavior.STATE_SETTLING:
-                                break;
-                        }
-                    }
 
-                    @Override
-                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
 
-                    }
-                });
+
+
 
 
             }
