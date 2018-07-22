@@ -7,8 +7,13 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
@@ -29,8 +34,11 @@ import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
+import com.dhruvam.popularmovies.tools.BlurBuilder;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModel;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
@@ -67,7 +75,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void setUpActivity(int movieId) {
 
-
+        final String image_url = getResources().getString(R.string.thumbnail_url);
         binding.lottieAnimationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,6 +98,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
+
         Log.d("movieID", movieId+"");
         final FavouriteMovieByIdViewModelFactory factory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(this), movieId);
         final FavouriteMovieByIdViewModel model = ViewModelProviders.of(this, factory).get(FavouriteMovieByIdViewModel.class);
@@ -108,10 +117,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                 /*String image_url = getResources().getString(R.string.thumbnail_url);
                 Picasso.with(getApplicationContext()).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
                 */
-                binding.movieTitleTv.setText(result.getTitle());
+                binding.movieTitleTv.setText(movieEntity.getTitle());
 
-                binding.movieReleaseDateTv.setText(result.getReleaseDate());
-                binding.movieRatingTv.setText(result.getVoteAverage()+"");
+                binding.movieReleaseDateTv.setText(movieEntity.getReleaseDate());
+                binding.movieRatingTv.setText(movieEntity.getVoteAverage()+"");
                 /*
                 binding.movieDescriptionTv.setText(result.getOverview());
                 binding.languageTv.setText(result.getOriginalLanguage());
@@ -131,6 +140,56 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
                 /* setting upbase URL */
                 MOVIE_URL = getResources().getString(R.string.base_url);
+
+                /*Target target = new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        binding.backgroundForDetailViewSv.setBackground(new BitmapDrawable(getResources(), BlurBuilder.blur(context, bitmap)));
+
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                };*/
+
+                //Picasso.with(context).load(image_url + mImageQuality + movieEntity.getPosterPath()).into(target);
+
+                BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(binding.trailerReviewBs);
+                sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                        switch (newState) {
+                            case BottomSheetBehavior.STATE_HIDDEN:
+                                break;
+                            case BottomSheetBehavior.STATE_EXPANDED: {
+                                //binding.trailerReviewBs.setText("Close Sheet");
+                            }
+                            break;
+                            case BottomSheetBehavior.STATE_COLLAPSED: {
+                                //btnBottomSheet.setText("Expand Sheet");
+                            }
+                            break;
+                            case BottomSheetBehavior.STATE_DRAGGING:
+                                break;
+                            case BottomSheetBehavior.STATE_SETTLING:
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+                    }
+                });
+
+
             }
         });
 
@@ -250,7 +309,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
-        //finish();
+        finish();
     }
 
 

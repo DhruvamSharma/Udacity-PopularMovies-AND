@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000</color>
+    <color name="colorPrimary">@color/productGridBackgroundColor</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#FFF</color>
     <color name="textColorPrimary">#FFF</color>
     <color name="toolbarIconColor">@color/textColorPrimary</color>
     <color name="loginPageBackgroundColor">#FFFFFF</color>
-    <color name="productGridBackgroundColor">#FFFBFA</color>
+    <color name="productGridBackgroundColor">#232435</color>
     <color name="colorControlActivated">@android:color/holo_red_dark</color>
-    <color name="light_transparent">#6da7a5a5</color>
-    <color name="colorLine">#000</color>
+    <color name="light_transparent">@android:color/transparent</color>
+    <color name="colorLine">#cf6d03</color>
+
 </resources>

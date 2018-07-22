@@ -11,6 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/trailers_label"
+            android:textColor="@android:color/white"
             android:layout_margin="8dp"
             android:id="@+id/trailer_tv"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
@@ -21,7 +22,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="10dp"
-            android:background="#14202e"
+            android:background="@color/colorLine"
             android:id="@+id/seperator_view"
 
             app:layout_constraintStart_toStartOf="@id/trailer_tv"

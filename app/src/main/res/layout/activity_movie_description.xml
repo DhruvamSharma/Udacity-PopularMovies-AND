@@ -4,35 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:context="com.dhruvam.popularmovies.activity.MovieDescriptionActivity">
 
-        <LinearLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:id="@+id/slide_layout_cl">
+            android:layout_height="match_parent"
+            android:background="@color/productGridBackgroundColor">
 
 
             <!-- TODO (14) Add the background while runtime in Java code with checking the build version -->
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/cut_shape_background"
-
-                android:layout_gravity="bottom">
+                android:background="@drawable/cut_shape_background">
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/movie_title_tv"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/colorLine"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:layout_marginTop="32dp"
                     android:layout_marginStart="16dp"
@@ -60,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/movie_rating_tv"
                     style="@style/PopularMovies.DetailMovie.MainImage.TextView"
-                    android:textColor="#5ed149"
+                    android:textColor="@color/colorLine"
 
                     app:layout_constraintStart_toStartOf="@id/movie_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/movie_title_tv"/>
@@ -70,7 +60,7 @@
                     android:id="@+id/movie_release_date_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     style="@style/PopularMovies.DetailMovie.MainImage.TextView"
 
                     app:layout_constraintStart_toEndOf="@id/movie_rating_tv"
@@ -88,6 +78,15 @@
 
 
             </android.support.constraint.ConstraintLayout>
+
+
+        <include layout="@layout/trailer_reviews_bottom_sheet" android:id="@+id/trailer_review_bs"/>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+
+
+
 
 
 
@@ -200,10 +199,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"/> -->
 
-        </LinearLayout>
 
 
-
-    </ScrollView>
 
 </layout>

@@ -1,16 +1,20 @@
 package com.dhruvam.popularmovies.activity;
 
+import android.app.ActionBar;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.SnapHelper;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,6 +67,13 @@ public class MovieGridActivity extends AppCompatActivity {
 
         //setting up the view for the activity and the binding reference
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.light_transparent)));
+
+
+
 
         //storing context for further use in static methods
         context = this;
