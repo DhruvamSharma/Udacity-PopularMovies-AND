@@ -10,12 +10,88 @@
         android:background="@android:color/black"
         tools:context="com.dhruvam.popularmovies.activity.MovieDescriptionActivity">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:id="@+id/slide_layout_cl">
 
-            <include layout="@layout/main_header_movie_description"
+
+            <!-- TODO (14) Add the background while runtime in Java code with checking the build version -->
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/cut_shape_background"
+
+                android:layout_gravity="bottom">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/movie_title_tv"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginStart="16dp"
+                    android:textStyle="bold"
+
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieAnimationView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+
+                    app:layout_constraintBottom_toBottomOf="@id/movie_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/movie_title_tv"
+                    app:layout_constraintTop_toTopOf="@id/movie_title_tv"
+                    app:lottie_fileName="love_animation.json" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/movie_rating_tv"
+                    style="@style/PopularMovies.DetailMovie.MainImage.TextView"
+                    android:textColor="#5ed149"
+
+                    app:layout_constraintStart_toStartOf="@id/movie_title_tv"
+                    app:layout_constraintTop_toBottomOf="@id/movie_title_tv"/>
+
+
+                <TextView
+                    android:id="@+id/movie_release_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    style="@style/PopularMovies.DetailMovie.MainImage.TextView"
+
+                    app:layout_constraintStart_toEndOf="@id/movie_rating_tv"
+                    app:layout_constraintTop_toTopOf="@id/movie_rating_tv"
+                    app:layout_constraintBottom_toBottomOf="@id/movie_rating_tv" />
+
+                <include android:id="@+id/trailer_view_holder" layout="@layout/trailor_layout"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+
+                    app:layout_constraintTop_toBottomOf="@id/movie_release_date_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/movie_title_tv" />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+
+            <!-- <include layout="@layout/main_header_movie_description"
                 android:id="@+id/header_layout"/>
 
 
@@ -122,9 +198,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"/>
+                app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"/> -->
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
 
 

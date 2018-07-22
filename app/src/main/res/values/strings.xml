@@ -43,7 +43,8 @@
     <string name="sort_menu">Sort</string>
     <string name="add_to_favourites">Add to Favourites</string>
     <string name="favourite_movie_label">Favourite Movies</string>
-
+    <string name="trailers_label">Trailers</string>
+    <string name="thumbnail_of_image_label">Thumbnail Of Image</string>
 
 
 </resources>

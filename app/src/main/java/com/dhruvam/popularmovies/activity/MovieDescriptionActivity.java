@@ -1,5 +1,6 @@
 package com.dhruvam.popularmovies.activity;
 
+import android.animation.ValueAnimator;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,7 +10,9 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,15 +29,8 @@ import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
-import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModel;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
-import com.squareup.picasso.Picasso;
-
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
@@ -46,7 +42,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     private String MOVIE_URL;
     private int movieId;
     static Context context;
-    MovieEntity movieEntity;
+    static MovieEntity movieEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +59,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
             movieId = intent.getIntExtra(getPackageName(), 0);
         }
 
+
         setUpActivity(movieId);
 
 
@@ -70,6 +67,30 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void setUpActivity(int movieId) {
 
+
+        binding.lottieAnimationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startLikeAnimation();
+            }
+        });
+
+        //TODO (9) Use this instead of ApplicationContext producing error. Why?
+        LinearLayoutManager manager = new LinearLayoutManager(context);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        adapter = new SimilarListAdapter(getApplicationContext());
+
+        binding.trailerViewHolder.similarListRv.setAdapter(adapter);
+        binding.trailerViewHolder.similarListRv.setLayoutManager(manager);
+
+        //Adding Snapping functionality to the recycler view
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(binding.trailerViewHolder.similarListRv);
+
+
+
+
+        Log.d("movieID", movieId+"");
         final FavouriteMovieByIdViewModelFactory factory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(this), movieId);
         final FavouriteMovieByIdViewModel model = ViewModelProviders.of(this, factory).get(FavouriteMovieByIdViewModel.class);
 
@@ -84,29 +105,28 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
                 movieEntity = result;
 
-                String image_url = getResources().getString(R.string.thumbnail_url);
+                /*String image_url = getResources().getString(R.string.thumbnail_url);
                 Picasso.with(getApplicationContext()).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
-                binding.headerLayout.movieTitleTv.setText(result.getTitle());
+                */
+                binding.movieTitleTv.setText(result.getTitle());
+
+                binding.movieReleaseDateTv.setText(result.getReleaseDate());
+                binding.movieRatingTv.setText(result.getVoteAverage()+"");
+                /*
                 binding.movieDescriptionTv.setText(result.getOverview());
-                binding.headerLayout.movieReleaseDateTv.setText(result.getReleaseDate());
-                binding.headerLayout.movieRatingTv.setText(result.getVoteAverage()+"");
                 binding.languageTv.setText(result.getOriginalLanguage());
                 binding.voteCountTv.setText(result.getVoteCount()+"");
 
-                /* expandable textview */
+
                 ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
-                //TODO (9) Use this instead of ApplicationContext producing error. Why?
-                GridLayoutManager manager = new GridLayoutManager(getApplicationContext(), 3);
-                adapter = new SimilarListAdapter(getApplicationContext());
-                binding.similarListRv.setLayoutManager(manager);
-                binding.similarListRv.setAdapter(adapter);
-                binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+
+                /*binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         addToFavourites();
                     }
-                });
+                });*/
 
 
                 /* setting upbase URL */
@@ -118,14 +138,32 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
+
         // TODO(12) Manage these calls and save them on the view model such that they are executed inside view model
 
-         /* Network setup and call */
+         // Network setup and call
         NetworkUtils.init(getApplicationContext());
         NetworkUtils.getHttpResponseForSimilarMovies(movieId);
 
         NetworkUtils.getReviewsForMovie(movieId);
         NetworkUtils.getTrailorsForMovie(movieId);
+    }
+
+
+    private void startLikeAnimation() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                binding.lottieAnimationView.setProgress((Float) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        if (binding.lottieAnimationView.getProgress() == 0f) {
+            animator.start();
+        } else {
+            binding.lottieAnimationView.setProgress(0f);
+        }
     }
 
 
@@ -177,7 +215,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
      */
     public static void receiveMovies(MovieResponse response) {
         mResponse = response;
-        adapter.switchAdapter(response);
+        //adapter.switchAdapter(response);
     }
 
     /**
@@ -195,35 +233,24 @@ public class MovieDescriptionActivity extends AppCompatActivity {
      * @param response
      */
     public static void recieveTrailors(MovieTrailors response) {
-
+        adapter.switchAdapter(response, movieEntity.getBackdropPath());
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
-        Log.e("here","here");
-        if(intent.hasExtra(getPackageName())) {
-
-            movieId = Parcels.unwrap(intent.getBundleExtra(getPackageName()).getParcelable(getPackageName()));
-        }
-        setUpActivity(movieId);
-    }
 
     public static void setProgressVsisiblity(String flag) {
-        if(flag.equals(context.getResources().getString(R.string.network_request_started))) {
+        /*if(flag.equals(context.getResources().getString(R.string.network_request_started))) {
             binding.loadingPb.setVisibility(View.VISIBLE);
         }
         else if(flag.equals(context.getResources().getString(R.string.network_request_finished))) {
             binding.loadingPb.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
-        finish();
+        //finish();
     }
 
 

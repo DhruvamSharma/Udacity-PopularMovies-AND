@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +34,8 @@ import java.util.List;
 /**
  * MovieGrid activity acts as a starting point for PopularMovies (Anflix)
  */
+
+//TODO(13) Remove Parcel Annotation Library
 public class MovieGridActivity extends AppCompatActivity {
 
     //mResponse is a reference of MovieResponse which is a POJO for MovieObjects
@@ -93,7 +97,10 @@ public class MovieGridActivity extends AppCompatActivity {
 
         //setting the layout manager
         mBinding.movieListRv.setLayoutManager(manager);
-        fetchFromDatabase();
+
+
+        //Setting up ViewModel
+        setUpViewModel();
 
     }
 
@@ -102,7 +109,7 @@ public class MovieGridActivity extends AppCompatActivity {
      * This is done so as to save the configuration changes and notify whenever there is a change also in the view model so that there is
      * no memory leak even if we rotate the screen while thre were changes in the database.
      */
-    private void fetchFromDatabase() {
+    private void setUpViewModel() {
 
         // TODO (3) List mapping to different type of objects through Stream API to avoid the conversionof objects and entities
 

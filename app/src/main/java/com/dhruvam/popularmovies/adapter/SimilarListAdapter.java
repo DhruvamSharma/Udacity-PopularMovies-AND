@@ -1,5 +1,6 @@
 package com.dhruvam.popularmovies.adapter;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
+import com.dhruvam.popularmovies.pojo.MovieTrailors;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -25,9 +29,10 @@ import org.parceler.Parcels;
 
 public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.MovieAdapter> {
 
-    private MovieResponse mResponse;
+    private MovieTrailors mResponse;
     private String mImageQuality;
     private Context mContext;
+    private String mImagePosterPath;
 
     public SimilarListAdapter(Context context) {
         mContext = context;
@@ -38,14 +43,38 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
     @NonNull
     @Override
     public MovieAdapter onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_grid_thumbnail,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.trailer_view_holder,parent,false);
         return new MovieAdapter(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieAdapter holder, int position) {
+    public void onBindViewHolder(@NonNull final MovieAdapter holder, int position) {
         String image_url = mContext.getResources().getString(R.string.thumbnail_url);
-        Picasso.with(mContext).load(image_url+mImageQuality+mResponse.getResults().get(position).getPosterPath()).into(holder.mImagePoster);
+        Picasso.with(mContext).load(image_url+mImageQuality+mImagePosterPath).into(holder.mImagePoster);
+        holder.mTrailerName.setText(mResponse.getResults().get(position).getName());
+        holder.mTrailerSource.setText(mResponse.getResults().get(position).getSite());
+        holder.animationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPlayAnimation(holder.animationView);
+            }
+        });
+    }
+
+    private void startPlayAnimation(final LottieAnimationView lottieAnimationView) {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                lottieAnimationView.setProgress((Float) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        if (lottieAnimationView.getProgress() == 0f) {
+            animator.start();
+        } else {
+            lottieAnimationView.setProgress(0f);
+        }
     }
 
     @Override
@@ -59,15 +88,21 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
     public class MovieAdapter extends RecyclerView.ViewHolder {
 
         ImageView mImagePoster;
+        TextView mTrailerName;
+        TextView mTrailerSource;
+        LottieAnimationView animationView;
 
         public MovieAdapter(View itemView) {
             super(itemView);
-            mImagePoster = itemView.findViewById(R.id.main_thumbnail_iv);
+            mImagePoster = itemView.findViewById(R.id.main_poster_iv);
+            mTrailerName = itemView.findViewById(R.id.trailer_name_tv);
+            mTrailerSource = itemView.findViewById(R.id.trailer_source_tv);
+            animationView = itemView.findViewById(R.id.lottieAnimationViewPlay);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    newActivity(getAdapterPosition());
+                    //newActivity(getAdapterPosition());
                 }
             });
         }
@@ -75,24 +110,21 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
 
     /* Helper Methods */
 
-    public void switchAdapter(MovieResponse response) {
+    public void switchAdapter(MovieTrailors response, String posterPath) {
         mResponse = response;
+        this.mImagePosterPath = posterPath;
         notifyDataSetChanged();
     }
 
     private void newActivity(int position) {
 
-        /* Parcelable code */
-        Parcelable parcelable = Parcels.wrap(mResponse.getResults().get(position));
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(mContext.getPackageName(), parcelable);
 
         /* Intent code */
 
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
-        intent.putExtra(mContext.getPackageName(), bundle);
+        intent.putExtra(mContext.getPackageName(), mResponse.getResults().get(position).getId());
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
-
         ((Activity)mContext).overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
 }
