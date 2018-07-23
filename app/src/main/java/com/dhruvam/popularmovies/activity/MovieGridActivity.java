@@ -33,6 +33,7 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -70,7 +71,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
 
 
 

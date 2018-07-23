@@ -8,7 +8,7 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 
 public class BlurBuilder {
-    private static final float BITMAP_SCALE = 0.2f;
+    private static final float BITMAP_SCALE = 0.5f;
     private static final float BLUR_RADIUS = 3.5f;
 
     public static Bitmap blur(Context context, Bitmap image) {

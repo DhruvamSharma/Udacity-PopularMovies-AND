@@ -40,6 +40,7 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
 import com.dhruvam.popularmovies.tools.BlurBuilder;
+import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModel;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
 import com.squareup.picasso.Picasso;
@@ -91,17 +92,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
             }
         });
 
-        //TODO (9) Use this instead of ApplicationContext producing error. Why?
-        LinearLayoutManager manager = new LinearLayoutManager(context);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        adapter = new SimilarListAdapter(getApplicationContext());
 
-        binding.trailerViewHolder.similarListRv.setAdapter(adapter);
-        binding.trailerViewHolder.similarListRv.setLayoutManager(manager);
 
-        //Adding Snapping functionality to the recycler view
-        SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(binding.trailerViewHolder.similarListRv);
+
 
 
         assert binding.trailerReviewBs != null;
@@ -176,14 +169,23 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
                 movieEntity = result;
 
-                /*String image_url = getResources().getString(R.string.thumbnail_url);
-                Picasso.with(getApplicationContext()).load(image_url + mImageQuality + result.getBackdropPath()).into(binding.headerLayout.mainImageBackdrop);
-                */
+                String image_url = getResources().getString(R.string.thumbnail_url);
+                Picasso.with(getApplicationContext()).load(image_url + mImageQuality + movieEntity.getBackdropPath()).into(binding.posterImageIv);
+
                 binding.movieTitleTv.setText(movieEntity.getTitle());
 
                 binding.movieReleaseDateTv.setText(movieEntity.getReleaseDate());
                 binding.movieRatingTv.setText(movieEntity.getVoteAverage()+"");
-                /*
+
+
+                // Network setup and call
+                NetworkUtils.init(getApplicationContext());
+                NetworkUtils.getHttpResponseForSimilarMovies(movieEntity.getId());
+
+                NetworkUtils.getReviewsForMovie(movieEntity.getId());
+                NetworkUtils.getTrailorsForMovie(movieEntity.getId());
+
+
                 binding.movieDescriptionTv.setText(result.getOverview());
                 binding.languageTv.setText(result.getOriginalLanguage());
                 binding.voteCountTv.setText(result.getVoteCount()+"");
@@ -192,12 +194,12 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                 ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
 
-                /*binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+                binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         addToFavourites();
                     }
-                });*/
+                });
 
 
                 /* setting upbase URL */
@@ -237,14 +239,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
-        // TODO(12) Manage these calls and save them on the view model such that they are executed inside view model
 
-         // Network setup and call
-        NetworkUtils.init(getApplicationContext());
-        NetworkUtils.getHttpResponseForSimilarMovies(movieId);
-
-        NetworkUtils.getReviewsForMovie(movieId);
-        NetworkUtils.getTrailorsForMovie(movieId);
     }
 
 
@@ -316,6 +311,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         //adapter.switchAdapter(response);
     }
 
+
+
+
     /**
      * Method called when the activity loads and
      * Recieves MovieResponse for display
@@ -326,14 +324,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * Recieve trailors for the current movie displayed
-     * @param response
-     */
-    public static void recieveTrailors(MovieTrailors response) {
-        adapter.switchAdapter(response, movieEntity.getBackdropPath());
+    public MovieEntity getMovieEntity() {
+        return movieEntity;
     }
-
 
     public static void setProgressVsisiblity(String flag) {
         /*if(flag.equals(context.getResources().getString(R.string.network_request_started))) {

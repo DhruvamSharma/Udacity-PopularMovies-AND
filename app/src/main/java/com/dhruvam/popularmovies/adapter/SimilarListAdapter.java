@@ -4,6 +4,9 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -19,7 +22,9 @@ import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
+import com.dhruvam.popularmovies.tools.BlurBuilder;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.parceler.Parcels;
 
@@ -50,7 +55,7 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
     @Override
     public void onBindViewHolder(@NonNull final MovieAdapter holder, int position) {
         String image_url = mContext.getResources().getString(R.string.thumbnail_url);
-        Picasso.with(mContext).load(image_url+mImageQuality+mImagePosterPath).into(holder.mImagePoster);
+
         holder.mTrailerName.setText(mResponse.getResults().get(position).getName());
         holder.mTrailerSource.setText(mResponse.getResults().get(position).getSite());
         holder.animationView.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +64,27 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
                 startPlayAnimation(holder.animationView);
             }
         });
+
+
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                holder.mImagePoster.setBackground(new BitmapDrawable(mContext.getResources(), BlurBuilder.blur(mContext, bitmap)));
+
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        Picasso.with(mContext).load(image_url+mImageQuality+mImagePosterPath).into(target);
     }
 
     private void startPlayAnimation(final LottieAnimationView lottieAnimationView) {
