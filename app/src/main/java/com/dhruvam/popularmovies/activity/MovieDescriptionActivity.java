@@ -58,6 +58,8 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     static Context context;
     static MovieEntity movieEntity;
 
+    private boolean isFavourite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +96,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
-
+        isFavourite = false;
 
 
         assert binding.trailerReviewBs != null;
@@ -130,7 +132,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
         binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Reviews"));
         binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Star Cast"));
-        binding.trailerReviewBs.tabLayout.setTabGravity(binding.trailerReviewBs.tabLayout.GRAVITY_FILL);
+        binding.trailerReviewBs.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         PagerAdapter adapter = new BottomSheetTabAdapter(getSupportFragmentManager(), binding.trailerReviewBs.tabLayout.getTabCount());
         binding.trailerReviewBs.pager.setAdapter(adapter);
@@ -169,6 +171,8 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
                 movieEntity = result;
 
+                checkIfFavourite();
+
                 String image_url = getResources().getString(R.string.thumbnail_url);
                 Picasso.with(getApplicationContext()).load(image_url + mImageQuality + movieEntity.getBackdropPath()).into(binding.posterImageIv);
 
@@ -194,10 +198,17 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                 ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
 
 
+
                 binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addToFavourites();
+                        if(binding.addToFavouritesBtn.getText().toString().equals("Favourite")) {
+
+                            FavouriteMovies movies = FavouriteMovies.getObjectModelFromData(movieEntity);
+                            deleteFromFavourites(movies);
+                        } else {
+                            addToFavourites();
+                        }
                     }
                 });
 
@@ -260,6 +271,37 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     }
 
 
+
+    private void checkIfFavourite() {
+
+        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+
+                FavouriteMovies movie = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getMovieById(movieId);
+                if(movie == null) {
+                    isFavourite = false;
+                } else
+                    isFavourite = true;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(isFavourite) {
+                            binding.addToFavouritesBtn.setText("Favourite");
+                        } else {
+                            binding.addToFavouritesBtn.setText("Add to favourites");
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+
+
+
+
     /**
      * Method for conversion of object model to data model and then passing to
      * the favourite movie database.
@@ -274,6 +316,13 @@ public class MovieDescriptionActivity extends AppCompatActivity {
             public void run() {
                 FavouriteMovies favouriteMovie = FavouriteMovies.getObjectModelFromData(movieEntity);
                 OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(favouriteMovie);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.addToFavouritesBtn.setText("Favourite");
+                    }
+                });
             }
         });
 
@@ -291,6 +340,13 @@ public class MovieDescriptionActivity extends AppCompatActivity {
             @Override
             public void run() {
                 OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().deleteMovie(movie);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.addToFavouritesBtn.setText("Add to favourites");
+                    }
+                });
             }
         });
     }
@@ -314,14 +370,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
-    /**
-     * Method called when the activity loads and
-     * Recieves MovieResponse for display
-     * @param reviews
-     */
-    public static void recieveReviews(MovieReviews reviews) {
-        Toast.makeText(context, reviews.toString(),Toast.LENGTH_SHORT).show();
-    }
+
 
 
     public MovieEntity getMovieEntity() {

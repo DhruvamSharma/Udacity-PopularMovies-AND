@@ -14,6 +14,7 @@ import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.dhruvam.popularmovies.executor.AppExecutor;
+import com.dhruvam.popularmovies.fragments.TabFragmentOne;
 import com.dhruvam.popularmovies.fragments.TabFragmentTwo;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
@@ -189,7 +190,7 @@ public class NetworkUtils {
                 .getAsObject(MovieReviews.class, new ParsedRequestListener<MovieReviews>() {
                     @Override
                     public void onResponse(MovieReviews response) {
-                        MovieDescriptionActivity.recieveReviews(response);
+                        TabFragmentOne.recieveReviews(response);
                     }
 
                     @Override

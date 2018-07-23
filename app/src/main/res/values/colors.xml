@@ -10,5 +10,6 @@
     <color name="colorControlActivated">@android:color/holo_red_dark</color>
     <color name="light_transparent">@android:color/transparent</color>
     <color name="colorLine">#cf6d03</color>
+    <color name="colorLineLoading">#434242</color>
 
 </resources>
