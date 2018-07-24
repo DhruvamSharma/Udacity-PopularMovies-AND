@@ -202,4 +202,10 @@ public class MovieEntity {
         }
         return list;
     }
+
+    @Ignore
+    public static MovieEntity getMovieEntityFromFavourite( FavouriteMovies result) {
+            MovieEntity entity = new MovieEntity(result.getVoteCount(), result.getId(), result.getVideo(), result.getVoteAverage(), result.getTitle(), result.getPopularity(), result.getPosterPath(), result.getOriginalLanguage(), result.getOriginalTitle(), result.getGenreIds(), result.getBackdropPath(), result.getAdult(), result.getOverview(), result.getReleaseDate());
+            return entity;
+    }
 }

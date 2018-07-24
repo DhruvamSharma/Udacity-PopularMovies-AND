@@ -3,14 +3,12 @@ package com.dhruvam.popularmovies.activity;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,13 +16,9 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
-import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
@@ -37,14 +31,16 @@ import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.dhruvam.popularmovies.databinding.ActivityMovieDescriptionBinding;
 import com.dhruvam.popularmovies.executor.AppExecutor;
 import com.dhruvam.popularmovies.network.NetworkUtils;
-import com.dhruvam.popularmovies.pojo.MovieReviews;
-import com.dhruvam.popularmovies.pojo.MovieTrailors;
-import com.dhruvam.popularmovies.tools.BlurBuilder;
 import com.dhruvam.popularmovies.tools.ResizableCustomView;
-import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModel;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
+import com.dhruvam.popularmovies.view_model.FavouriteMovieViewModelById;
+import com.dhruvam.popularmovies.view_model.FavouriteMoviesViewModel;
+import com.dhruvam.popularmovies.view_model.OfflineMovieByIdViewModel;
+import com.dhruvam.popularmovies.view_model.OfflineMovieByIdViewModelFactory;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+
+
+// TODO( PRIORITY )  Handle rotating screens for Both the activities.
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
@@ -131,7 +127,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
         binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Reviews"));
-        binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Star Cast"));
+        binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Trailers"));
         binding.trailerReviewBs.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         PagerAdapter adapter = new BottomSheetTabAdapter(getSupportFragmentManager(), binding.trailerReviewBs.tabLayout.getTabCount());
@@ -157,64 +153,110 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
         Log.d("movieID", movieId+"");
-        final FavouriteMovieByIdViewModelFactory factory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(this), movieId);
-        final FavouriteMovieByIdViewModel model = ViewModelProviders.of(this, factory).get(FavouriteMovieByIdViewModel.class);
+
+
+
+        final OfflineMovieByIdViewModelFactory factory = new OfflineMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(this), movieId);
+        final OfflineMovieByIdViewModel model = ViewModelProviders.of(this, factory).get(OfflineMovieByIdViewModel.class);
 
         final LiveData<MovieEntity> entity = model.getMovieById();
-        entity.observe(this, new Observer<MovieEntity>() {
-            @Override
-            public void onChanged(@Nullable MovieEntity result) {
-
-                //TODO (10) Activity is being created again and again on rotation even when there is ViewModel used
-                Log.e(getPackageName(), "calling description from database");
-                entity.removeObserver(this);
-
-                movieEntity = result;
-
-                checkIfFavourite();
-
-                String image_url = getResources().getString(R.string.thumbnail_url);
-                Picasso.with(getApplicationContext()).load(image_url + mImageQuality + movieEntity.getBackdropPath()).into(binding.posterImageIv);
-
-                binding.movieTitleTv.setText(movieEntity.getTitle());
-
-                binding.movieReleaseDateTv.setText(movieEntity.getReleaseDate());
-                binding.movieRatingTv.setText(movieEntity.getVoteAverage()+"");
 
 
-                // Network setup and call
-                NetworkUtils.init(getApplicationContext());
-                NetworkUtils.getHttpResponseForSimilarMovies(movieEntity.getId());
+            entity.observe(this, new Observer<MovieEntity>() {
+                @Override
+                public void onChanged(@Nullable MovieEntity result) {
 
-                NetworkUtils.getReviewsForMovie(movieEntity.getId());
-                NetworkUtils.getTrailorsForMovie(movieEntity.getId());
+                    //TODO (10) Activity is being created again and again on rotation even when there is ViewModel used
+                    Log.e(getPackageName(), "calling description from database");
+                    entity.removeObserver(this);
 
+                    movieEntity = result;
 
-                binding.movieDescriptionTv.setText(result.getOverview());
-                binding.languageTv.setText(result.getOriginalLanguage());
-                binding.voteCountTv.setText(result.getVoteCount()+"");
+                    if (result == null ) {
+                        GetFavouritesByIdAndSetUp();
+                    } else {
 
-
-                ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
-
-
-
-                binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(binding.addToFavouritesBtn.getText().toString().equals("Favourite")) {
-
-                            FavouriteMovies movies = FavouriteMovies.getObjectModelFromData(movieEntity);
-                            deleteFromFavourites(movies);
-                        } else {
-                            addToFavourites();
-                        }
+                        setUpActivityMore(movieEntity);
                     }
-                });
 
 
-                /* setting upbase URL */
-                MOVIE_URL = getResources().getString(R.string.base_url);
+
+                }
+            });
+
+
+
+    }
+
+
+    private void GetFavouritesByIdAndSetUp() {
+
+        FavouriteMovieByIdViewModelFactory modelFactory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(getApplicationContext()), movieId);
+        FavouriteMovieViewModelById viewModelById = ViewModelProviders.of(this, modelFactory).get(FavouriteMovieViewModelById.class);
+
+        final LiveData<FavouriteMovies> movies = viewModelById.getFavouriteMovieById();
+        movies.observe(this, new Observer<FavouriteMovies>() {
+            @Override
+            public void onChanged(@Nullable FavouriteMovies favouriteMovies) {
+
+                movies.removeObserver(this);
+
+                movieEntity = MovieEntity.getMovieEntityFromFavourite(favouriteMovies);
+
+                setUpActivityMore(movieEntity);
+
+
+            }
+        });
+
+    }
+
+
+    private void setUpActivityMore(MovieEntity result) {
+        checkIfFavouriteAndSetBtnText();
+
+        String image_url = getResources().getString(R.string.thumbnail_url);
+        Picasso.with(getApplicationContext()).load(image_url + mImageQuality + movieEntity.getBackdropPath()).into(binding.posterImageIv);
+
+        binding.movieTitleTv.setText(movieEntity.getTitle());
+
+        binding.movieReleaseDateTv.setText(movieEntity.getReleaseDate());
+        binding.movieRatingTv.setText(movieEntity.getVoteAverage()+"");
+
+
+        // Network setup and call
+        NetworkUtils.init(getApplicationContext());
+        NetworkUtils.getHttpResponseForSimilarMovies(movieEntity.getId());
+
+        NetworkUtils.getReviewsForMovie(movieEntity.getId());
+        NetworkUtils.getTrailorsForMovie(movieEntity.getId());
+
+
+        binding.movieDescriptionTv.setText(result.getOverview());
+        binding.languageTv.setText(result.getOriginalLanguage());
+        binding.voteCountTv.setText(result.getVoteCount()+"");
+
+
+        ResizableCustomView.doResizeTextView(binding.movieDescriptionTv, MAX_LINES, "View More", true);
+
+
+
+        binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(binding.addToFavouritesBtn.getText().toString().equals("Favourite")) {
+
+                    FavouriteMovies movies = FavouriteMovies.getObjectModelFromData(movieEntity);
+                    deleteFromFavourites(movies);
+                } else {
+                    addToFavourites();
+                }
+            }
+        });
+
+
+        /* setting upbase URL */
+        MOVIE_URL = getResources().getString(R.string.base_url);
 
                 /*Target target = new Target() {
                     @Override
@@ -234,17 +276,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                     }
                 };*/
 
-                //Picasso.with(context).load(image_url + mImageQuality + movieEntity.getPosterPath()).into(target);
-
-
-
-
-
-
-
-            }
-        });
-
+        //Picasso.with(context).load(image_url + mImageQuality + movieEntity.getPosterPath()).into(target);
 
 
 
@@ -270,9 +302,13 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         }
     }
 
+    private void checkIfFavouriteAndSetUpActivity() {
+
+    }
 
 
-    private void checkIfFavourite() {
+
+    private void checkIfFavouriteAndSetBtnText() {
 
         AppExecutor.getInstance().diskIO().execute(new Runnable() {
             @Override

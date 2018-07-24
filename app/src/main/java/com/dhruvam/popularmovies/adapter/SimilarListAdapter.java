@@ -2,11 +2,13 @@ package com.dhruvam.popularmovies.adapter;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -128,7 +130,7 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //newActivity(getAdapterPosition());
+                    watchYoutubeVideo(mContext, mResponse.getResults().get(getAdapterPosition()).getId());
                 }
             });
         }
@@ -142,15 +144,14 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
         notifyDataSetChanged();
     }
 
-    private void newActivity(int position) {
-
-
-        /* Intent code */
-
-        Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
-        intent.putExtra(mContext.getPackageName(), mResponse.getResults().get(position).getId());
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        mContext.startActivity(intent);
-        ((Activity)mContext).overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+    public static void watchYoutubeVideo(Context context, String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
     }
 }

@@ -1,24 +1,29 @@
 package com.dhruvam.popularmovies.view_model;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 
 public class FavouriteMovieByIdViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
-    private OfflineMovieAccessDatabase mDatabase;
-    private int mFavouriteMovieId;
+    OfflineMovieAccessDatabase mDb;
+    int movieId;
 
-    public FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase mDatabase, int mFavouriteMovieId) {
-        this.mDatabase = mDatabase;
-        this.mFavouriteMovieId = mFavouriteMovieId;
+    public FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase mDb, int id) {
+
+        this.mDb = mDb;
+        this.movieId = id;
+
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new FavouriteMovieByIdViewModel(mDatabase, mFavouriteMovieId);
+        return  (T) new FavouriteMovieViewModelById( mDb, movieId);
     }
 }

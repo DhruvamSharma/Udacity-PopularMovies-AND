@@ -162,7 +162,6 @@ public class MainGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         Intent intent = new Intent(mContext, MovieDescriptionActivity.class);
         intent.putExtra(mContext.getPackageName(), mResponse.getResults().get(position).getId());
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
         ((Activity)mContext).overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }

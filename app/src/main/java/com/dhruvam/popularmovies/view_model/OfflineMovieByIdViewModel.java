@@ -6,12 +6,12 @@ import android.arch.lifecycle.ViewModel;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.MovieEntity;
 
-public class FavouriteMovieByIdViewModel extends ViewModel{
+public class OfflineMovieByIdViewModel extends ViewModel{
 
 
     private LiveData<MovieEntity> movieEntityLiveData;
 
-    public FavouriteMovieByIdViewModel(OfflineMovieAccessDatabase mDatabase, int mFavouriteMovieId) {
+    public OfflineMovieByIdViewModel(OfflineMovieAccessDatabase mDatabase, int mFavouriteMovieId) {
 
         movieEntityLiveData = mDatabase.getMovieDao().getMovieById(mFavouriteMovieId);
     }
