@@ -3,23 +3,23 @@ package com.dhruvam.popularmovies.activity;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.adapter.BottomSheetTabAdapter;
@@ -34,13 +34,10 @@ import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.tools.ResizableCustomView;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieByIdViewModelFactory;
 import com.dhruvam.popularmovies.view_model.FavouriteMovieViewModelById;
-import com.dhruvam.popularmovies.view_model.FavouriteMoviesViewModel;
 import com.dhruvam.popularmovies.view_model.OfflineMovieByIdViewModel;
 import com.dhruvam.popularmovies.view_model.OfflineMovieByIdViewModelFactory;
 import com.squareup.picasso.Picasso;
 
-
-// TODO( PRIORITY )  Handle rotating screens for Both the activities.
 
 public class MovieDescriptionActivity extends AppCompatActivity {
 
@@ -53,6 +50,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     private int movieId;
     static Context context;
     static MovieEntity movieEntity;
+    FloatingActionButton button;
 
     private boolean isFavourite;
 
@@ -90,9 +88,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
             }
         });
 
-
-
-        isFavourite = false;
+        button = binding.addToFavouritesBtn;
 
 
         assert binding.trailerReviewBs != null;
@@ -130,6 +126,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         binding.trailerReviewBs.tabLayout.addTab(binding.trailerReviewBs.tabLayout.newTab().setText("Trailers"));
         binding.trailerReviewBs.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        binding.trailerReviewBs.tabLayout.setBackgroundResource(R.drawable.cut_shape_background);
+
         PagerAdapter adapter = new BottomSheetTabAdapter(getSupportFragmentManager(), binding.trailerReviewBs.tabLayout.getTabCount());
         binding.trailerReviewBs.pager.setAdapter(adapter);
         binding.trailerReviewBs.pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener( binding.trailerReviewBs.tabLayout));
@@ -166,8 +165,6 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(@Nullable MovieEntity result) {
 
-                    //TODO (10) Activity is being created again and again on rotation even when there is ViewModel used
-                    Log.e(getPackageName(), "calling description from database");
                     entity.removeObserver(this);
 
                     movieEntity = result;
@@ -213,7 +210,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
     private void setUpActivityMore(MovieEntity result) {
-        checkIfFavouriteAndSetBtnText();
+        checkIfFavouriteAndSetupActivity();
 
         String image_url = getResources().getString(R.string.thumbnail_url);
         Picasso.with(getApplicationContext()).load(image_url + mImageQuality + movieEntity.getBackdropPath()).into(binding.posterImageIv);
@@ -222,6 +219,8 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
         binding.movieReleaseDateTv.setText(movieEntity.getReleaseDate());
         binding.movieRatingTv.setText(movieEntity.getVoteAverage()+"");
+
+        checkIfFavouriteAndSetupActivity();
 
 
         // Network setup and call
@@ -241,16 +240,14 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
 
 
-        binding.addToFavouritesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(binding.addToFavouritesBtn.getText().toString().equals("Favourite")) {
+        binding.addToFavouritesBtn.setOnClickListener( (view) -> {
+            if( !isFavourite ) {
 
-                    FavouriteMovies movies = FavouriteMovies.getObjectModelFromData(movieEntity);
-                    deleteFromFavourites(movies);
-                } else {
-                    addToFavourites();
-                }
+                addToFavourites();
+
+            } else {
+                FavouriteMovies movies = FavouriteMovies.getObjectModelFromData(movieEntity);
+                deleteFromFavourites(movies);
             }
         });
 
@@ -288,12 +285,9 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void startLikeAnimation() {
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                binding.lottieAnimationView.setProgress((Float) valueAnimator.getAnimatedValue());
-            }
-        });
+        animator.addUpdateListener((valueAnimator -> {
+            binding.lottieAnimationView.setProgress((Float) valueAnimator.getAnimatedValue());
+        }));
 
         if (binding.lottieAnimationView.getProgress() == 0f) {
             animator.start();
@@ -302,37 +296,25 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         }
     }
 
-    private void checkIfFavouriteAndSetUpActivity() {
-
-    }
 
 
+    private void checkIfFavouriteAndSetupActivity() {
 
-    private void checkIfFavouriteAndSetBtnText() {
 
-        AppExecutor.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
+        AppExecutor.getInstance().diskIO().execute(() -> {
+            FavouriteMovies movie = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getMovieById(movieId);
+            if(movie == null) {
+                isFavourite = false;
+            } else
+                isFavourite = true;
 
-                FavouriteMovies movie = OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().getMovieById(movieId);
-                if(movie == null) {
-                    isFavourite = false;
+            runOnUiThread(() -> {
+                if( isFavourite ) {
+                    button.setImageResource(R.drawable.heart_selected);
                 } else
-                    isFavourite = true;
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(isFavourite) {
-                            binding.addToFavouritesBtn.setText("Favourite");
-                        } else {
-                            binding.addToFavouritesBtn.setText("Add to favourites");
-                        }
-                    }
-                });
-
-            }
-        });
+                    button.setImageResource(R.drawable.heart_unselected);
+            });
+        } );
     }
 
 
@@ -347,19 +329,19 @@ public class MovieDescriptionActivity extends AppCompatActivity {
         //Then through the abstract method moviesDAO(), adding a movie on button click.
 
 
-        AppExecutor.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                FavouriteMovies favouriteMovie = FavouriteMovies.getObjectModelFromData(movieEntity);
-                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(favouriteMovie);
+        AppExecutor.getInstance().diskIO().execute( () -> {
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.addToFavouritesBtn.setText("Favourite");
-                    }
-                });
-            }
+            FavouriteMovies favouriteMovie = FavouriteMovies.getObjectModelFromData(movieEntity);
+            OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().addMovie(favouriteMovie);
+
+            runOnUiThread( () -> {
+
+                button.setImageResource(R.drawable.heart_selected);
+                isFavourite = true;
+
+                Log.e("checking for fab", "added to favourites");
+            });
+
         });
 
 
@@ -372,23 +354,20 @@ public class MovieDescriptionActivity extends AppCompatActivity {
      */
     public void deleteFromFavourites(final FavouriteMovies movie) {
 
-        AppExecutor.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().deleteMovie(movie);
+        AppExecutor.getInstance().diskIO().execute(() -> {
+            OfflineMovieAccessDatabase.getInstance(getApplicationContext()).getDao().deleteMovie(movie);
+            runOnUiThread( () -> {
+                button.setImageResource(R.drawable.heart_unselected);
+                isFavourite = false;
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.addToFavouritesBtn.setText("Add to favourites");
-                    }
-                });
-            }
-        });
+                Log.e("checking for fab", "added to favourites");
+            });
+        }
+
+
+        );
+
     }
-
-
-
 
 
     /* ---------------- Helper Methods ---------------- */

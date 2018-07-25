@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         app:elevation="@dimen/cardview_default_elevation"
@@ -8,56 +8,45 @@
         app:cardCornerRadius="16dp">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:scaleType="centerCrop"
             android:contentDescription="@string/thumbnail_of_image_label"
             android:id="@+id/main_poster_iv"
-            android:layout_gravity="center"/>
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lottieAnimationViewPlay"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:lottie_fileName="love_animation.json" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/trailer_name_tv"
-                android:layout_margin="16dp"
-                android:textColor="@android:color/white"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lottieAnimationViewPlay"
-                app:layout_constraintBottom_toTopOf="@+id/trailer_source_tv"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/trailer_source_tv"
-                android:textColor="@android:color/white"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
 
-                app:layout_constraintStart_toStartOf="@id/trailer_name_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/trailer_name_tv"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_name_tv"
+            android:layout_margin="16dp"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            <!--app:layout_constraintTop_toBottomOf="@id/lottieAnimationViewPlay"-->
+            app:layout_constraintBottom_toTopOf="@+id/trailer_source_tv"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_source_tv"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
 
 
-        </android.support.constraint.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="@id/trailer_name_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trailer_name_tv"/>
 
-    </android.support.v7.widget.CardView>
+
+
+
+    </android.support.constraint.ConstraintLayout>
 </layout>

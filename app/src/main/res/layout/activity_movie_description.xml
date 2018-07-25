@@ -14,10 +14,12 @@
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <!-- TODO (14) Add the background while runtime in Java code with checking the build version -->
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/main_content_holder"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp">
 
 
                     <TextView
@@ -152,15 +154,6 @@
                         tools:text="@string/mobie_thumbnail_img" />
 
 
-                    <Button
-                        android:id="@+id/add_to_favourites_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/add_to_favourites"
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/movie_description_tv" />
 
 
                 </android.support.constraint.ConstraintLayout>
@@ -172,122 +165,18 @@
 
             <include layout="@layout/trailer_reviews_bottom_sheet" android:id="@+id/trailer_review_bs"/>
 
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_to_favourites_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="24dp"
+                android:layout_marginBottom="48dp"
+                app:layout_anchor="@id/main_content_holder"
+                app:layout_anchorGravity="bottom|right|end" />
+
         </android.support.design.widget.CoordinatorLayout>
 
-
-
-
-
-
-
-        <!-- <include layout="@layout/main_header_movie_description"
-            android:id="@+id/header_layout"/>
-
-
-        <TextView
-            android:id="@+id/language_label_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-            android:textColor="#bfbdbd"
-            android:text="@string/language_label"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_layout" />
-
-        <TextView
-            android:id="@+id/language_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-            android:textColor="#bfbdbd"
-
-            app:layout_constraintTop_toTopOf="@id/language_label_tv"
-            app:layout_constraintBottom_toBottomOf="@id/language_label_tv"
-            app:layout_constraintStart_toEndOf="@id/language_label_tv" />
-
-        <TextView
-            android:id="@+id/vote_count_label_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-            android:textColor="#bfbdbd"
-            android:text="@string/vote_count_label"
-
-            app:layout_constraintStart_toStartOf="@id/language_label_tv"
-            app:layout_constraintTop_toBottomOf="@id/language_label_tv" />
-
-        <TextView
-            android:id="@+id/vote_count_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-            android:textColor="#bfbdbd"
-
-            app:layout_constraintTop_toTopOf="@id/vote_count_label_tv"
-            app:layout_constraintBottom_toBottomOf="@id/vote_count_label_tv"
-            app:layout_constraintStart_toEndOf="@id/vote_count_label_tv" />
-
-        <TextView
-            android:id="@+id/movie_description_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle"
-            android:textColor="#bfbdbd"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/vote_count_label_tv"
-            app:layout_constraintTop_toBottomOf="@id/vote_count_label_tv"
-            tools:text="@string/mobie_thumbnail_img" />
-
-        <TextView
-            android:id="@+id/more_like_this_label_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:textColor="#bfbdbd"
-            android:text="@string/more_like_this"
-            android:textStyle="bold"
-
-            app:layout_constraintStart_toStartOf="@id/movie_description_tv"
-            app:layout_constraintTop_toBottomOf="@id/movie_description_tv" />
-
-        <Button
-            android:id="@+id/add_to_favourites_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_to_favourites"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"
-            app:layout_constraintBottom_toTopOf="@id/similar_list_rv"/>
-
-
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/similar_list_rv"
-            android:layout_margin="8dp"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"/>
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/loading_pb"
-            android:visibility="visible"
-            android:theme="@style/PopularMovies.CircularProgress"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/more_like_this_label_tv"/> -->
 
 
 

@@ -41,7 +41,7 @@ public class TabFragmentTwo extends Fragment {
 
         //TODO (9) Use this instead of ApplicationContext producing error. Why?
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         adapter = new SimilarListAdapter(view.getContext());
 
         binding.similarListRv.setAdapter(adapter);

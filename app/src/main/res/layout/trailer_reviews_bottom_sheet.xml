@@ -22,7 +22,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
 
-                android:background="@drawable/cut_shape_background"
+
                 android:layout_height="wrap_content"
                 android:elevation="6dp"
                 android:minHeight="?actionBarSize"

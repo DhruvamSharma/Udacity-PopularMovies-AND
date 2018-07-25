@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
@@ -17,6 +18,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
+        Log.e("Actively retrieving", " from the database here");
         movieList = OfflineMovieAccessDatabase.getInstance(application.getApplicationContext()).getMovieDao().getAllMovies();
     }
 
