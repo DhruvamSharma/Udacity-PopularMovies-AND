@@ -45,6 +45,7 @@
     <string name="favourite_movie_label">Favourite Movies</string>
     <string name="trailers_label">Trailers</string>
     <string name="thumbnail_of_image_label">Thumbnail Of Image</string>
+    <string name="no_item_in_the_list">No item in the List</string>
 
 
 </resources>

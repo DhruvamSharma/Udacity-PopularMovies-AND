@@ -28,7 +28,6 @@ import com.dhruvam.popularmovies.tools.BlurBuilder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.parceler.Parcels;
 
 /**
  * Created by dell on 18-06-2018.
@@ -60,49 +59,10 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
 
         holder.mTrailerName.setText(mResponse.getResults().get(position).getName());
         holder.mTrailerSource.setText(mResponse.getResults().get(position).getSite());
-        holder.animationView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startPlayAnimation(holder.animationView);
-            }
-        });
 
 
-        Target target = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                holder.mImagePoster.setBackground(new BitmapDrawable(mContext.getResources(), BlurBuilder.blur(mContext, bitmap)));
 
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        };
-
-        Picasso.with(mContext).load(image_url+mImageQuality+mImagePosterPath).into(target);
-    }
-
-    private void startPlayAnimation(final LottieAnimationView lottieAnimationView) {
-        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                lottieAnimationView.setProgress((Float) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        if (lottieAnimationView.getProgress() == 0f) {
-            animator.start();
-        } else {
-            lottieAnimationView.setProgress(0f);
-        }
+        Picasso.with(mContext).load(image_url+mImageQuality+mImagePosterPath).into(holder.mImagePoster);
     }
 
     @Override
@@ -118,20 +78,16 @@ public class SimilarListAdapter extends RecyclerView.Adapter<SimilarListAdapter.
         ImageView mImagePoster;
         TextView mTrailerName;
         TextView mTrailerSource;
-        LottieAnimationView animationView;
 
         public MovieAdapter(View itemView) {
             super(itemView);
             mImagePoster = itemView.findViewById(R.id.main_poster_iv);
             mTrailerName = itemView.findViewById(R.id.trailer_name_tv);
             mTrailerSource = itemView.findViewById(R.id.trailer_source_tv);
-            animationView = itemView.findViewById(R.id.lottieAnimationViewPlay);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    watchYoutubeVideo(mContext, mResponse.getResults().get(getAdapterPosition()).getId());
-                }
+
+            itemView.setOnClickListener((view) -> {
+                watchYoutubeVideo(mContext, mResponse.getResults().get(getAdapterPosition()).getId());
             });
         }
     }

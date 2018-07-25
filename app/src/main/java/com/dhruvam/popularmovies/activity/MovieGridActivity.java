@@ -40,12 +40,13 @@ import java.util.Objects;
  * MovieGrid activity acts as a starting point for PopularMovies (Anflix)
  */
 
-//TODO(13) Remove Parcel Annotation Library
 public class MovieGridActivity extends AppCompatActivity {
 
     //mResponse is a reference of MovieResponse which is a POJO for MovieObjects
+
+
     //It is declared static because is was needed to be used in static method
-    //TODO(6) Is this a right reason to declare the reference static?
+    //TODO(6) Is this a right reason to declare the reference static: A variable to be used inside a static method so declared static?
     static MovieResponse mResponse;
 
     //ActivityBinding for avoiding various findViewById calls
@@ -56,7 +57,7 @@ public class MovieGridActivity extends AppCompatActivity {
     static MainGridAdapter adapter;
 
     //Context declared static. Leaks possible.
-    //TODO (7) how to avoid this?
+    //TODO (7) how to avoid this: making a context static?
     static Context context;
 
     //Bottomsheet reference for showing and hiding the bottomsheet in the main activity (MovieGridActivity)
@@ -116,6 +117,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
     }
 
+
     /**
      * A method to fetch movies from the database in the view model and recieving the object of LiveData type
      * This is done so as to save the configuration changes and notify whenever there is a change also in the view model so that there is
@@ -123,7 +125,6 @@ public class MovieGridActivity extends AppCompatActivity {
      */
     private void setUpViewModel() {
 
-        // TODO (3) List mapping to different type of objects through Stream API to avoid the conversionof objects and entities
 
         //Logging for debugging issues
         Log.e(getPackageName(), "data from database");
@@ -215,8 +216,21 @@ public class MovieGridActivity extends AppCompatActivity {
      */
     public static void receiveData(MovieResponse response) {
         mResponse = response;
-        adapter.switchAdapter(response);
+
+        if(mResponse.getResults().size() == 0 || mResponse ==null) {
+            mBinding.movieListRv.setVisibility(View.GONE);
+            mBinding.errorTextTv.setVisibility(View.VISIBLE);
+        } else {
+
+            mBinding.movieListRv.setVisibility(View.VISIBLE);
+            mBinding.errorTextTv.setVisibility(View.GONE);
+            adapter.switchAdapter(response);
+        }
+
     }
+
+
+
 
 
     /**
@@ -274,9 +288,6 @@ public class MovieGridActivity extends AppCompatActivity {
      * and then calling the switch adapter method to change the data in the activity
      */
     public void getAllFavourites() {
-        //TODO (6) Save the state when rotating the screen
-        //logging for debug issues
-        Log.e(getPackageName(), "fetching from database");
 
         //Getting instance of view model of this activity for saving the configuration changes
         FavouriteMoviesViewModel viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
@@ -293,16 +304,27 @@ public class MovieGridActivity extends AppCompatActivity {
 
                 //converting the list of Favourite Movie enttity to Movie Response Object
                 //TODO (5) To be done outside the UI thread and then notice the CPU and memory usage
-                List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
+                if(favouriteMovies != null) {
 
-                //Creating a movie Response object to store the results of the data fetched from the database and
-                //creating a similar path for representing the UI
-                MovieResponse response = new MovieResponse();
-                response.setResults(list);
+                    if(favouriteMovies.size() == 0) {
+                        mBinding.movieListRv.setVisibility(View.GONE);
+                        mBinding.errorTextTv.setVisibility(View.VISIBLE);
+                    } else {
 
-                //Calling the switch adapter method of the Main Grid Adapter to change the data and
-                //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
-                adapter.switchAdapter(response);
+                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
+
+                        //Creating a movie Response object to store the results of the data fetched from the database and
+                        //creating a similar path for representing the UI
+                        MovieResponse response = new MovieResponse();
+                        response.setResults(list);
+
+                        //Calling the switch adapter method of the Main Grid Adapter to change the data and
+                        //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
+                        adapter.switchAdapter(response);
+                    }
+
+                }
+
             }
         });
 

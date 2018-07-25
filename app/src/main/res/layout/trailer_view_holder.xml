@@ -8,15 +8,16 @@
         app:cardCornerRadius="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:scaleType="centerCrop"
             android:contentDescription="@string/thumbnail_of_image_label"
             android:id="@+id/main_poster_iv"
 
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/trailer_name_tv"/>
 
 
 
@@ -28,10 +29,9 @@
             android:textColor="@android:color/white"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
 
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            <!--app:layout_constraintTop_toBottomOf="@id/lottieAnimationViewPlay"-->
-            app:layout_constraintBottom_toTopOf="@+id/trailer_source_tv"/>
+            app:layout_constraintStart_toStartOf="@id/main_poster_iv"
+            app:layout_constraintBottom_toTopOf="@id/trailer_source_tv"
+            app:layout_constraintTop_toBottomOf="@id/main_poster_iv"/>
 
         <TextView
             android:layout_width="0dp"
@@ -42,8 +42,8 @@
 
 
             app:layout_constraintStart_toStartOf="@id/trailer_name_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/trailer_name_tv"/>
+            app:layout_constraintTop_toBottomOf="@id/trailer_name_tv"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 

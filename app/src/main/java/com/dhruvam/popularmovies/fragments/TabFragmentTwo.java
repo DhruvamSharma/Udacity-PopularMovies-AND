@@ -1,6 +1,7 @@
 package com.dhruvam.popularmovies.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,15 +27,19 @@ public class TabFragmentTwo extends Fragment {
     static SimilarListAdapter adapter;
     static MovieEntity movieEntity;
     static MovieDescriptionActivity activity;
+    private static Context mContext;
+
+    private static FragmentTabFragmentTwoBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        FragmentTabFragmentTwoBinding binding =  DataBindingUtil.inflate(inflater, R.layout.fragment_tab_fragment_two, container,false);
+        binding =  DataBindingUtil.inflate(inflater, R.layout.fragment_tab_fragment_two, container,false);
 
         View view = binding.getRoot();
 
+        mContext = getContext();
 
         activity = (MovieDescriptionActivity) getActivity();
 
@@ -54,7 +59,6 @@ public class TabFragmentTwo extends Fragment {
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(binding.similarListRv);
 
-        // TODO(12) Manage these calls and save them on the view model such that they are executed inside view model
 
 
 
@@ -69,7 +73,18 @@ public class TabFragmentTwo extends Fragment {
     public static void recieveTrailors(MovieTrailors response) {
 
         movieEntity = activity.getMovieEntity();
-        if (movieEntity != null)
-        adapter.switchAdapter(response, movieEntity.getBackdropPath());
+
+        if(response.getResults().size() == 0 || response == null) {
+            binding.similarListRv.setVisibility(View.GONE);
+            binding.errorTextFragmentTwoTv.setVisibility(View.VISIBLE);
+        } else {
+            binding.errorTextFragmentTwoTv.setVisibility(View.GONE);
+            binding.similarListRv.setVisibility(View.VISIBLE);
+            if (movieEntity != null)
+                adapter.switchAdapter(response, movieEntity.getBackdropPath());
+        }
+
     }
+
+
 }

@@ -21,6 +21,8 @@ import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.pojo.MovieReviews;
 import com.dhruvam.popularmovies.pojo.MovieTrailors;
 
+import java.util.List;
+
 /**
  * Created by dell on 05-06-2018.
  */
@@ -159,10 +161,25 @@ public class NetworkUtils {
                     @Override
                     public void onResponse(MovieResponse response) {
                         mResponse[0] = response;
-                        MovieGridActivity.receiveData(mResponse[0]);
-                        MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
-                        BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
-                        BottomSheetFragment.hideBottomSheet();
+
+                        AppExecutor.getInstance().diskIO().execute(() -> {
+
+
+                            List<MovieEntity> entityList = MovieEntity.getDataModelListFromObject(response.getResults());
+
+                            OfflineMovieAccessDatabase.getInstance(mContext).getMovieDao().addAllMovies(entityList);
+
+                            AppExecutor.getInstance().mainThread().execute( () -> {
+
+                                MovieGridActivity.receiveData(mResponse[0]);
+                                MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
+                                BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
+                                BottomSheetFragment.hideBottomSheet();
+                            });
+                            //runOnUiThread here and add
+
+                        });
+
                     }
 
                     @Override
@@ -182,6 +199,7 @@ public class NetworkUtils {
      * @param movieId
      */
     public static void getReviewsForMovie(int movieId) {
+
 
         String url = mContext.getResources().getString(R.string.url_for_similar_movies);
         AndroidNetworking.get(url+movieId+"/reviews?api_key="+API_Key)
@@ -207,6 +225,7 @@ public class NetworkUtils {
      * @param movieId
      */
     public static void getTrailorsForMovie(int movieId) {
+
 
         String url = mContext.getResources().getString(R.string.url_for_similar_movies);
         AndroidNetworking.get(url+movieId+"/videos?api_key="+API_Key)

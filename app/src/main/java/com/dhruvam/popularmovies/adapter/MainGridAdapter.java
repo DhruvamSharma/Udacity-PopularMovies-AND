@@ -11,13 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dhruvam.popularmovies.R;
 import com.dhruvam.popularmovies.activity.MovieDescriptionActivity;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 import com.squareup.picasso.Picasso;
 
-import org.parceler.Parcels;
 
 /**
  * Created by dell on 05-06-2018.

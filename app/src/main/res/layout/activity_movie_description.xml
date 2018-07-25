@@ -19,7 +19,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/main_content_holder"
                     android:layout_gravity="center"
-                    android:layout_margin="16dp">
+                    android:layout_margin="16dp"
+                    android:layout_marginBottom="?actionBarSize">
 
 
                     <TextView

@@ -22,13 +22,14 @@ public class TabFragmentOne extends Fragment {
 
     static ReviewAdapter mAdapter;
     static Context mContext;
+    static FragmentTabFragmentOneBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        FragmentTabFragmentOneBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tab_fragment_one,container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tab_fragment_one,container, false);
         View view = binding.getRoot();
 
         mContext = getContext();
@@ -54,7 +55,17 @@ public class TabFragmentOne extends Fragment {
      */
     public static void recieveReviews(MovieReviews reviews) {
 
-        mAdapter.switchAdapter(reviews);
+        if(reviews.getResults().size() == 0 || reviews == null) {
+            binding.reviewRv.setVisibility(View.GONE);
+            binding.errorTextFragmentOneTv.setVisibility(View.VISIBLE);
+        } else {
+            binding.errorTextFragmentOneTv.setVisibility(View.GONE);
+            binding.reviewRv.setVisibility(View.VISIBLE);
+            mAdapter.switchAdapter(reviews);
+        }
+
 
     }
+
+
 }

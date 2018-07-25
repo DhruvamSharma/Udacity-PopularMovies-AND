@@ -9,7 +9,6 @@ import com.dhruvam.popularmovies.database.entity.MovieEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,6 @@ public class MovieResponse {
         this.results = results;
     }
 
-    @Parcel
     public static class Result{
 
         /**

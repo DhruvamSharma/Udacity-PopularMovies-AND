@@ -8,6 +8,16 @@
         tools:context=".activity.MovieGridActivity"
         android:background="@android:color/black">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:id="@+id/error_text_tv"
+            android:visibility="gone"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+
+            android:text="@string/no_item_in_the_list"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
@@ -27,6 +37,8 @@
 
             <include layout="@layout/skeleton_loading"/>
         </io.supercharge.shimmerlayout.ShimmerLayout>
+
+
 
     </FrameLayout>
 </layout>

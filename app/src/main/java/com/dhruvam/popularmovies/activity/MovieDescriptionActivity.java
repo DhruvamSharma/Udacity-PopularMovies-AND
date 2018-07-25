@@ -170,14 +170,11 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                     movieEntity = result;
 
                     if (result == null ) {
-                        GetFavouritesByIdAndSetUp();
+                        getFavouritesByIdAndSetUp();
                     } else {
 
                         setUpActivityMore(movieEntity);
                     }
-
-
-
                 }
             });
 
@@ -186,22 +183,24 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     }
 
 
-    private void GetFavouritesByIdAndSetUp() {
+    private void getFavouritesByIdAndSetUp() {
 
         FavouriteMovieByIdViewModelFactory modelFactory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(getApplicationContext()), movieId);
         FavouriteMovieViewModelById viewModelById = ViewModelProviders.of(this, modelFactory).get(FavouriteMovieViewModelById.class);
 
         final LiveData<FavouriteMovies> movies = viewModelById.getFavouriteMovieById();
+
+
         movies.observe(this, new Observer<FavouriteMovies>() {
             @Override
             public void onChanged(@Nullable FavouriteMovies favouriteMovies) {
+
 
                 movies.removeObserver(this);
 
                 movieEntity = MovieEntity.getMovieEntityFromFavourite(favouriteMovies);
 
                 setUpActivityMore(movieEntity);
-
 
             }
         });

@@ -56,8 +56,6 @@ dependencies {
     implementation 'com.amitshekhar.android:android-networking:1.0.0'
     implementation "android.arch.paging:runtime:1.0.1"
     implementation 'com.airbnb.android:lottie:2.2.0'
-    compile 'org.parceler:parceler-api:1.1.10'
-    annotationProcessor 'org.parceler:parceler:1.1.10'
     implementation 'com.ethanhua:skeleton:1.1.1'
     implementation 'io.supercharge:shimmerlayout:2.1.0'
 
