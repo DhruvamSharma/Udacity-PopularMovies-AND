@@ -9,12 +9,10 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
-import android.support.v7.widget.SnapHelper;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +30,9 @@ import com.dhruvam.popularmovies.fragments.BottomSheetFragment;
 import com.dhruvam.popularmovies.network.NetworkUtils;
 import com.dhruvam.popularmovies.pojo.MovieResponse;
 
+
+import org.parceler.Parcels;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,6 @@ import java.util.Objects;
 /**
  * MovieGrid activity acts as a starting point for PopularMovies (Anflix)
  */
-
 public class MovieGridActivity extends AppCompatActivity {
 
     //mResponse is a reference of MovieResponse which is a POJO for MovieObjects
@@ -80,8 +80,11 @@ public class MovieGridActivity extends AppCompatActivity {
         //storing context for further use in static methods
         context = this;
 
-        //fetching movie list from the network and storing in the database for the first time
-        fetchMovieList();
+        if(savedInstanceState == null) {
+            //fetching movie list from the network and storing in the database for the first time
+            fetchMovieList();
+        }
+
 
 
         /* Setting up recycler View */
@@ -118,6 +121,26 @@ public class MovieGridActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("isIntantiated", true);
+        Parcelable parcel = Parcels.wrap(mResponse.getResults());
+        outState.putParcelable("adapterData", parcel);
+
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Parcelable parcelable = savedInstanceState.getParcelable("adapterData");
+        List<MovieResponse.Result> data= Parcels.unwrap(parcelable);
+        MovieResponse response = new MovieResponse();
+        response.setResults(data);
+        adapter.switchAdapter(response);
+    }
+
     /**
      * A method to fetch movies from the database in the view model and recieving the object of LiveData type
      * This is done so as to save the configuration changes and notify whenever there is a change also in the view model so that there is
@@ -149,7 +172,9 @@ public class MovieGridActivity extends AppCompatActivity {
                 Log.e(getPackageName(), " updated data from database");
 
                 //converting entity back to pojo to be set in the adapter.
-                response.setResults(MovieResponse.Result.getObjectModelFromAllMoviesData(movieEntities));
+                 List<MovieResponse.Result> data = MovieResponse.Result.getObjectModelFromAllMoviesData(movieEntities);
+                response.setResults(data);
+                mResponse = response;
                 // changing adapter data and notifying the adapter to refresh.
                 adapter.switchAdapter(response);
             }
@@ -215,9 +240,16 @@ public class MovieGridActivity extends AppCompatActivity {
      * @param response
      */
     public static void receiveData(MovieResponse response) {
-        //mResponse = response;
 
-        adapter.switchAdapter(response);
+        if(response.getResults().size() == 0 || response ==null) {
+            mBinding.movieListRv.setVisibility(View.GONE);
+            mBinding.errorTextTv.setVisibility(View.VISIBLE);
+        } else {
+
+            mBinding.movieListRv.setVisibility(View.VISIBLE);
+            mBinding.errorTextTv.setVisibility(View.GONE);
+            adapter.switchAdapter(response);
+        }
 
     }
 

@@ -10,13 +10,14 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dell on 05-06-2018.
  */
-
 public class MovieResponse {
 
     @SerializedName("page")
@@ -30,7 +31,7 @@ public class MovieResponse {
     private Integer totalPages;
     @SerializedName("results")
     @Expose
-    private List<Result> results = null;
+    public List<Result> results = null;
 
     public Integer getPage() {
         return page;
@@ -64,6 +65,8 @@ public class MovieResponse {
         this.results = results;
     }
 
+
+    @Parcel
     public static class Result{
 
         /**
@@ -83,6 +86,8 @@ public class MovieResponse {
          * @param overview
          * @param releaseDate
          */
+
+
         public Result(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title, Double popularity, String posterPath, String originalLanguage, String originalTitle, List<Integer> genreIds, String backdropPath, Boolean adult, String overview, String releaseDate) {
             this.voteCount = voteCount;
             this.id = id;

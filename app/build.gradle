@@ -58,6 +58,8 @@ dependencies {
     implementation 'com.airbnb.android:lottie:2.2.0'
     implementation 'com.ethanhua:skeleton:1.1.1'
     implementation 'io.supercharge:shimmerlayout:2.1.0'
+    compile 'org.parceler:parceler-api:1.1.11'
+    annotationProcessor 'org.parceler:parceler:1.1.11'
 
     /* Room */
     def room_version = "1.1.1"

@@ -33,6 +33,7 @@ public class NetworkUtils {
     private static String API_Key;
     private static MovieResponse[] mResponse = new MovieResponse[1];
     private static Context mContext;
+    static String movie_url = null;
 
 
     public static void init(Context context) {
@@ -138,7 +139,6 @@ public class NetworkUtils {
         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_started));
         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
 
-        String movie_url = null;
         if( tag.equals(mContext.getResources().getString(R.string.top_rated_label))) {
             movie_url = mContext.getResources().getString(R.string.url_for_top_rated);
         } else if (tag.equals(mContext.getResources().getString(R.string.most_popular_label))) {
