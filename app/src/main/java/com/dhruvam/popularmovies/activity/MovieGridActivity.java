@@ -215,17 +215,9 @@ public class MovieGridActivity extends AppCompatActivity {
      * @param response
      */
     public static void receiveData(MovieResponse response) {
-        mResponse = response;
+        //mResponse = response;
 
-        if(mResponse.getResults().size() == 0 || mResponse ==null) {
-            mBinding.movieListRv.setVisibility(View.GONE);
-            mBinding.errorTextTv.setVisibility(View.VISIBLE);
-        } else {
-
-            mBinding.movieListRv.setVisibility(View.VISIBLE);
-            mBinding.errorTextTv.setVisibility(View.GONE);
-            adapter.switchAdapter(response);
-        }
+        adapter.switchAdapter(response);
 
     }
 
@@ -246,7 +238,7 @@ public class MovieGridActivity extends AppCompatActivity {
         //initialising the FAN library
         NetworkUtils.init(this);
 
-        //Making a GET request to the server for Movie list and storig it in the database
+        //Making a GET request to the server for Movie list and storing it in the database
         NetworkUtils.getHttpResponse();
     }
 
@@ -340,8 +332,6 @@ public class MovieGridActivity extends AppCompatActivity {
     public void showBottomSheetDialog() {
 
         //creating a bottom sheet everytime when we open the bottomsheet
-        //COMPLETED (8) always use the same object for the bottom sheet to show and hide the fragment.
-        //COMPLETED To avoid craeting unecessary objects. Can we do that?
         //bottomSheetDialogFragment =  new BottomSheetFragment();
         bottomSheetDialogFragment = BottomSheetFragment.getBottomSheetInstance();
         bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
