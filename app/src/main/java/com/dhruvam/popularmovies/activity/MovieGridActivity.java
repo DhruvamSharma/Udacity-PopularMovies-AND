@@ -222,7 +222,10 @@ public class MovieGridActivity extends AppCompatActivity {
             case R.id.sort_menu: {
 
                 //showing bottomsheet by passing in the context of the bottom sheet
+                if( viewModel != null)
                 removeFavouriteObserver();
+
+                //showing bottomsheet by passing in the context of the bottom sheet
                 showBottomSheetDialog();
                 return true;
             }
@@ -332,7 +335,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
                 //TODO (4) Notice the change in the database when deleting out of the favourites
                 //Logging done for debug issues
-                Log.e(getPackageName(), "fetching favourites from livedata");
+                Log.e(getPackageName(), "fetching favourites from live data");
                 //viewModel.getFavouriteMovieList().removeObserver(this);
 
                 //converting the list of Favourite Movie enttity to Movie Response Object
