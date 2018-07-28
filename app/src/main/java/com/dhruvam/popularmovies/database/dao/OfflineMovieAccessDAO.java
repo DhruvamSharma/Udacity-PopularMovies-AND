@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface OfflineMovieAccessDAO {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addAllMovies(List<MovieEntity> resultList);
 
     @Query("SELECT * FROM offline_popular_movies")

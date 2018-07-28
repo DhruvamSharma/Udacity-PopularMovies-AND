@@ -59,18 +59,16 @@ public class NetworkUtils {
                 .getAsObject(MovieResponse.class, new ParsedRequestListener<MovieResponse>() {
                     @Override
                     public void onResponse(final MovieResponse response) {
-                        //MovieGridActivity.hideLoading();
-                        //mResponse[0] = response;
 
                         AppExecutor.getInstance().diskIO().execute(new Runnable() {
                             @Override
                             public void run() {
 
                                 OfflineMovieAccessDatabase.getInstance(mContext).getMovieDao().addAllMovies(MovieEntity.getDataModelListFromObject(response.getResults()));
-                                Log.e(mContext.getPackageName(), "error might be here");
                                 AppExecutor.getInstance().mainThread().execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        MovieGridActivity.receiveData(response);
                                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                                     }
                                 });
@@ -78,15 +76,11 @@ public class NetworkUtils {
                             }
                         });
 
-
-                        //MovieGridActivity.receiveData(mResponse[0]);
-
                     }
 
                     @Override
                     public void onError(ANError anError) {
                         //TODO (2) Handle Error condition here.
-                        //mResponse[0] = null;
                         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_finished));
                     }
 
@@ -113,6 +107,7 @@ public class NetworkUtils {
                         mResponse[0] = response;
                         MovieDescriptionActivity.receiveMovies(mResponse[0]);
                         MovieDescriptionActivity.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_finished));
+
                     }
 
                     @Override
@@ -138,22 +133,23 @@ public class NetworkUtils {
 
         BottomSheetFragment.setProgressVsisiblity(mContext.getResources().getString(R.string.network_request_started));
         MovieGridActivity.setLoadingScreenVisibility(mContext.getResources().getString(R.string.network_request_started));
+        String url = "";
 
         if( tag.equals(mContext.getResources().getString(R.string.top_rated_label))) {
-            movie_url = mContext.getResources().getString(R.string.url_for_top_rated);
+            url = mContext.getResources().getString(R.string.url_for_top_rated);
         } else if (tag.equals(mContext.getResources().getString(R.string.most_popular_label))) {
-            movie_url = mContext.getResources().getString(R.string.url_for_most_popular);
+            url = mContext.getResources().getString(R.string.url_for_most_popular);
         } else if (tag.equals(mContext.getResources().getString(R.string.upcoming_label))) {
-            movie_url = mContext.getResources().getString(R.string.url_for_upcoming);
+            url = mContext.getResources().getString(R.string.url_for_upcoming);
         } else if (tag.equals(mContext.getResources().getString(R.string.latest_label))) {
-            movie_url = mContext.getResources().getString(R.string.url_for_latest);
+            url = mContext.getResources().getString(R.string.url_for_latest);
         } else if (tag.equals(mContext.getResources().getString(R.string.now_playing_label))) {
-            movie_url = mContext.getResources().getString(R.string.url_for_now_playing);
+            url = mContext.getResources().getString(R.string.url_for_now_playing);
         } else if( tag.equals(mContext.getResources().getString(R.string.favourite_movie_label))) {
             //FavouriteMoviesDatabase.getDatabase(mContext).getFavouritesDao().getFavouriteMovieList();
         }
 
-        AndroidNetworking.get(movie_url+API_Key)
+        AndroidNetworking.get(url+API_Key)
                 .setTag("test")
                 .setPriority(Priority.HIGH)
                 .build()

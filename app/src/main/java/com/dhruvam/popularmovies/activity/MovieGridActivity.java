@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -62,6 +63,9 @@ public class MovieGridActivity extends AppCompatActivity {
 
     //Bottomsheet reference for showing and hiding the bottomsheet in the main activity (MovieGridActivity)
     private static BottomSheetFragment bottomSheetDialogFragment;
+
+    //mResponse is a reference of MovieResponse which is a POJO for MovieObjects
+    FavouriteMoviesViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +120,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
         //Setting up ViewModel
-        setUpViewModel();
+        //        setUpViewModel();
 
     }
 
@@ -127,7 +131,7 @@ public class MovieGridActivity extends AppCompatActivity {
         outState.putBoolean("isIntantiated", true);
         Parcelable parcel = Parcels.wrap(mResponse.getResults());
         outState.putParcelable("adapterData", parcel);
-
+        Log.e("onSaveInstanceState", "here");
     }
 
 
@@ -139,12 +143,13 @@ public class MovieGridActivity extends AppCompatActivity {
         MovieResponse response = new MovieResponse();
         response.setResults(data);
         adapter.switchAdapter(response);
+        Log.e("onRestoreInstanceState", "here");
     }
 
     /**
      * A method to fetch movies from the database in the view model and recieving the object of LiveData type
      * This is done so as to save the configuration changes and notify whenever there is a change also in the view model so that there is
-     * no memory leak even if we rotate the screen while thre were changes in the database.
+     * no memory leak even if we rotate the screen while there were changes in the database.
      */
     private void setUpViewModel() {
 
@@ -156,7 +161,7 @@ public class MovieGridActivity extends AppCompatActivity {
         final MovieResponse response = new MovieResponse();
 
         //Getting an instance of ViewModel from ViewModel providers such that we can access the data
-        //from the view model and avaoiding excess database calls on configuration changes.
+        //from the view model and avoiding excess database calls on configuration changes.
         MainActivityViewModel viewModelProvider = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
         //A final list created to store all the data fetched from the view model. This data is stored as
@@ -176,7 +181,7 @@ public class MovieGridActivity extends AppCompatActivity {
                 response.setResults(data);
                 mResponse = response;
                 // changing adapter data and notifying the adapter to refresh.
-                adapter.switchAdapter(response);
+                adapter.switchAdapter(mResponse);
             }
         });
 
@@ -217,6 +222,7 @@ public class MovieGridActivity extends AppCompatActivity {
             case R.id.sort_menu: {
 
                 //showing bottomsheet by passing in the context of the bottom sheet
+                removeFavouriteObserver();
                 showBottomSheetDialog();
                 return true;
             }
@@ -241,6 +247,8 @@ public class MovieGridActivity extends AppCompatActivity {
      */
     public static void receiveData(MovieResponse response) {
 
+        mResponse = response;
+
         if(response.getResults().size() == 0 || response ==null) {
             mBinding.movieListRv.setVisibility(View.GONE);
             mBinding.errorTextTv.setVisibility(View.VISIBLE);
@@ -248,7 +256,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
             mBinding.movieListRv.setVisibility(View.VISIBLE);
             mBinding.errorTextTv.setVisibility(View.GONE);
-            adapter.switchAdapter(response);
+            adapter.switchAdapter(mResponse);
         }
 
     }
@@ -314,7 +322,7 @@ public class MovieGridActivity extends AppCompatActivity {
     public void getAllFavourites() {
 
         //Getting instance of view model of this activity for saving the configuration changes
-        FavouriteMoviesViewModel viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
 
         //using the viewmodel instance to get a livedata object of list of favourite movies
         //observing this list for any changes and then running the onChanged method on the UI thread
@@ -325,6 +333,7 @@ public class MovieGridActivity extends AppCompatActivity {
                 //TODO (4) Notice the change in the database when deleting out of the favourites
                 //Logging done for debug issues
                 Log.e(getPackageName(), "fetching favourites from livedata");
+                //viewModel.getFavouriteMovieList().removeObserver(this);
 
                 //converting the list of Favourite Movie enttity to Movie Response Object
                 //TODO (5) To be done outside the UI thread and then notice the CPU and memory usage
@@ -335,23 +344,37 @@ public class MovieGridActivity extends AppCompatActivity {
                         mBinding.errorTextTv.setVisibility(View.VISIBLE);
                     } else {
 
-                        List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
 
-                        //Creating a movie Response object to store the results of the data fetched from the database and
-                        //creating a similar path for representing the UI
-                        MovieResponse response = new MovieResponse();
-                        response.setResults(list);
-
-                        //Calling the switch adapter method of the Main Grid Adapter to change the data and
-                        //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
-                        adapter.switchAdapter(response);
                     }
 
                 }
+                List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
+
+                //Creating a movie Response object to store the results of the data fetched from the database and
+                //creating a similar path for representing the UI
+                MovieResponse response = new MovieResponse();
+                response.setResults(list);
+
+                mResponse = response;
+
+                //Calling the switch adapter method of the Main Grid Adapter to change the data and
+                //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
+                adapter.switchAdapter(response);
+
+
 
             }
         });
 
+
+
+    }
+
+
+    public void removeFavouriteObserver(){
+        final LiveData<List<FavouriteMovies>> observable =  viewModel.getFavouriteMovieList();
+        if (observable != null && observable.hasObservers())
+        observable.removeObservers(this);
     }
 
 
@@ -374,5 +397,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
         // hiding the bottom sheet when necessary
         bottomSheetDialogFragment.dismiss();
+
+
     }
 }

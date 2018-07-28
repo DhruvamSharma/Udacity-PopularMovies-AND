@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.dhruvam.popularmovies.database.dao.FavouriteMovieDAO;
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
@@ -18,6 +19,7 @@ public class FavouriteMoviesViewModel extends AndroidViewModel {
 
     public FavouriteMoviesViewModel(@NonNull Application application) {
         super(application);
+        Log.e("in favourites", "fetching from database");
         favouriteMovieList = OfflineMovieAccessDatabase.getInstance(application.getApplicationContext()).getDao().getFavouriteMovieList();
     }
 

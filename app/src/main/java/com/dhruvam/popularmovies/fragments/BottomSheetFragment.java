@@ -53,26 +53,22 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         final String[] query_parameter = {null};
 
         final RadioGroup radioGroup = v.findViewById(R.id.category_rg);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == topRatedRB.getId()) {
-                    assert container != null;
-                    query_parameter[0] = v.getContext().getResources().getString(R.string.top_rated_label);
-                }
-                else if( checkedId == mostPopular.getId()) {
-                    assert container != null;
-                    query_parameter[0] = v.getContext().getResources().getString(R.string.most_popular_label);
-                }
-                else if (checkedId == upcoming.getId()) {
-                    assert container != null;
-                    query_parameter[0] = v.getContext().getResources().getString(R.string.upcoming_label);
-                }
-                else if (checkedId == now_playing.getId()) {
-                    assert container != null;
-                    query_parameter[0] = v.getContext().getResources().getString(R.string.now_playing_label);
-                }
-
+        radioGroup.setOnCheckedChangeListener((radioGroup1, checkedId) -> {
+            if (checkedId == topRatedRB.getId()) {
+                assert container != null;
+                query_parameter[0] = v.getContext().getResources().getString(R.string.top_rated_label);
+            }
+            else if( checkedId == mostPopular.getId()) {
+                assert container != null;
+                query_parameter[0] = v.getContext().getResources().getString(R.string.most_popular_label);
+            }
+            else if (checkedId == upcoming.getId()) {
+                assert container != null;
+                query_parameter[0] = v.getContext().getResources().getString(R.string.upcoming_label);
+            }
+            else if (checkedId == now_playing.getId()) {
+                assert container != null;
+                query_parameter[0] = v.getContext().getResources().getString(R.string.now_playing_label);
             }
         });
 
@@ -96,7 +92,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             public void onClick(View v) {
                 radioGroup.clearCheck();
                 query_parameter[0] = null;
-                NetworkUtils.getHttpResponse();
+
             }
         });
         return v;

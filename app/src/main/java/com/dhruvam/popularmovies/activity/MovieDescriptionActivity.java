@@ -165,6 +165,8 @@ public class MovieDescriptionActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(@Nullable MovieEntity result) {
 
+                    Log.e("in detail activity", "here");
+
                     entity.removeObserver(this);
 
                     movieEntity = result;
