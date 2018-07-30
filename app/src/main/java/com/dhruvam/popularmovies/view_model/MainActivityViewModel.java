@@ -25,4 +25,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     public LiveData<List<MovieEntity>> getAllMovieList() {
         return movieList;
     }
+
+    public void setAllMovieList(LiveData<List<MovieEntity>> movieList) {
+        this.movieList = movieList;
+    }
 }
