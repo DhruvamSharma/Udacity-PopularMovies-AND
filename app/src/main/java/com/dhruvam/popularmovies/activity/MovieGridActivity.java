@@ -71,6 +71,8 @@ public class MovieGridActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.e(getPackageName(),"I am in onCreate");
+
         //setting up the view for the activity and the binding reference
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
@@ -122,6 +124,11 @@ public class MovieGridActivity extends AppCompatActivity {
         //Setting up ViewModel
         //        setUpViewModel();
 
+
+        //Getting instance of view model of this activity for saving the configuration changes
+        viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
+        viewModel.init(getApplicationContext());
+
     }
 
 
@@ -131,7 +138,7 @@ public class MovieGridActivity extends AppCompatActivity {
         outState.putBoolean("isIntantiated", true);
         Parcelable parcel = Parcels.wrap(mResponse.getResults());
         outState.putParcelable("adapterData", parcel);
-        Log.e("onSaveInstanceState", "here");
+        Log.e("onSaveInstanceState", "in onCreate");
     }
 
 
@@ -221,7 +228,10 @@ public class MovieGridActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.sort_menu: {
 
-                //showing bottomsheet by passing in the context of the bottom sheet
+                //removing the observer when the observer has been set for the favourites
+                //this is because, once the favourites button is clicked,the observer is triggered.
+                //Then whenever there is a change in the favourites collection, the previous page(The movie grid activity) is provided with the
+                //Favourites collection data and the previous data is removed.
                 if( viewModel != null)
                 removeFavouriteObserver();
 
@@ -324,56 +334,55 @@ public class MovieGridActivity extends AppCompatActivity {
      */
     public void getAllFavourites() {
 
-        //Getting instance of view model of this activity for saving the configuration changes
-        viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
 
         //using the viewmodel instance to get a livedata object of list of favourite movies
         //observing this list for any changes and then running the onChanged method on the UI thread
-        viewModel.getFavouriteMovieList().observe(this, new Observer<List<FavouriteMovies>>() {
-            @Override
-            public void onChanged(@Nullable List<FavouriteMovies> favouriteMovies) {
+        viewModel.getFavouriteMovieList().observe(this, (List<FavouriteMovies> favouriteMovies) -> {
 
-                //TODO (4) Notice the change in the database when deleting out of the favourites
-                //Logging done for debug issues
-                Log.e(getPackageName(), "fetching favourites from live data");
-                //viewModel.getFavouriteMovieList().removeObserver(this);
+            //TODO (4) Notice the change in the database when deleting out of the favourites
+            //Logging done for debug issues
+            Log.e(getPackageName(), "fetching favourites from live data");
+            //viewModel.getFavouriteMovieList().removeObserver(this);
 
-                //converting the list of Favourite Movie enttity to Movie Response Object
-                //TODO (5) To be done outside the UI thread and then notice the CPU and memory usage
-                if(favouriteMovies != null) {
+            //converting the list of Favourite Movie enttity to Movie Response Object
+            //TODO (5) To be done outside the UI thread and then notice the CPU and memory usage
+            if(favouriteMovies != null) {
 
-                    if(favouriteMovies.size() == 0) {
-                        mBinding.movieListRv.setVisibility(View.GONE);
-                        mBinding.errorTextTv.setVisibility(View.VISIBLE);
-                    } else {
+                if(favouriteMovies.size() == 0) {
+                    mBinding.movieListRv.setVisibility(View.GONE);
+                    mBinding.errorTextTv.setVisibility(View.VISIBLE);
+                } else {
 
-
-                    }
 
                 }
-                List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
-
-                //Creating a movie Response object to store the results of the data fetched from the database and
-                //creating a similar path for representing the UI
-                MovieResponse response = new MovieResponse();
-                response.setResults(list);
-
-                mResponse = response;
-
-                //Calling the switch adapter method of the Main Grid Adapter to change the data and
-                //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
-                adapter.switchAdapter(response);
-
-
 
             }
+            List<MovieResponse.Result> list = MovieResponse.Result.getObjectModelFromFavouritesData(favouriteMovies);
+
+            //Creating a movie Response object to store the results of the data fetched from the database and
+            //creating a similar path for representing the UI
+            MovieResponse response = new MovieResponse();
+            response.setResults(list);
+
+            mResponse = response;
+
+            //Calling the switch adapter method of the Main Grid Adapter to change the data and
+            //calling teh notifyDataSetChanged method to refresh the data on screen displayed through the adapter
+            adapter.switchAdapter(response);
+
         });
+
 
 
 
     }
 
 
+    /**
+     * This method removes teh favourite Observer because it is triggered once it is called.
+     * This observable then keeps looking for change. When it receives it, it will update the adapter and
+     * All of the data gets corrupted.
+     */
     public void removeFavouriteObserver(){
         final LiveData<List<FavouriteMovies>> observable =  viewModel.getFavouriteMovieList();
         if (observable != null && observable.hasObservers())
