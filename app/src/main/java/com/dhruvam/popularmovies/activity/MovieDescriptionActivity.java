@@ -187,8 +187,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     private void getFavouritesByIdAndSetUp() {
 
-        FavouriteMovieByIdViewModelFactory modelFactory = new FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase.getInstance(getApplicationContext()), movieId);
+        FavouriteMovieByIdViewModelFactory modelFactory = new FavouriteMovieByIdViewModelFactory(movieId);
         FavouriteMovieViewModelById viewModelById = ViewModelProviders.of(this, modelFactory).get(FavouriteMovieViewModelById.class);
+        viewModelById.init();
+
 
         final LiveData<FavouriteMovies> movies = viewModelById.getFavouriteMovieById();
 

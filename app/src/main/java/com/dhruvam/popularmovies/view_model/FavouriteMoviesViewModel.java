@@ -9,20 +9,20 @@ import android.util.Log;
 
 import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDatabase;
 import com.dhruvam.popularmovies.database.entity.FavouriteMovies;
+import com.dhruvam.popularmovies.repository.FavouriteMoviesRepository;
 
 import java.util.List;
 
+/**
+ *
+ //Do not store any activity context objects because View Model will outlive any Activity,
+ //Thus the context object will live in the heap even when the screen is rotated and
+ //While screen is rotated, a new context object will be created and thus creating leaks
+ */
 public class FavouriteMoviesViewModel extends ViewModel {
 
-    /**
-     *
-     //Do not store any activity context objects because View Model will outlive any Activity,
-     //Thus the context object will live in the heap even when the screen is rotated and
-     //While screen is rotated, a new context object will be created and thus creating leaks
-     */
-
-    //This is an application context object. This can be kept inside a view model. Because this will not outlive the application.
-    private Context context;
+    //Repository reference to fetch the data
+    private FavouriteMoviesRepository favouriteMoviesRepository;
 
 
     //LiveData reference that holds the data freshly retrieved from the database
@@ -32,20 +32,21 @@ public class FavouriteMoviesViewModel extends ViewModel {
 
 
     //Empty constructor because the class is extending view model.
-    //We could also make the class extend the AndroidViewModel and it would recieve an application context easily.
-    //this way we could avoid keeping a refrence to the
+    //We could also make the class extend the AndroidViewModel and it would receive an application context easily.
+    //this way we could avoid keeping a refrence to the context
     public FavouriteMoviesViewModel() {
         Log.e("in favourites", "fetching from database");
-
+        favouriteMoviesRepository = new FavouriteMoviesRepository();
     }
 
-    //Initialisation method for the view model. First time storing the data from the database
+    //Initialisation method for the view model and the repository. First time storing the data from the repository
     public void init(Context mContext) {
-        favouriteMovieList = OfflineMovieAccessDatabase.getInstance(mContext).getDao().getFavouriteMovieList();
+        favouriteMoviesRepository.init(mContext);
+        favouriteMovieList = favouriteMoviesRepository.getFavouriteMovieList();
     }
 
 
-    //getters and setters for the livedata.
+    //public getters and setters for the livedata.
     public LiveData<List<FavouriteMovies>> getFavouriteMovieList() {
         return favouriteMovieList;
     }

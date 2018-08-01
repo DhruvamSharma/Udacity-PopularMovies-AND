@@ -11,12 +11,10 @@ import com.dhruvam.popularmovies.database.database_instance.OfflineMovieAccessDa
 
 public class FavouriteMovieByIdViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
-    OfflineMovieAccessDatabase mDb;
     int movieId;
 
-    public FavouriteMovieByIdViewModelFactory(OfflineMovieAccessDatabase mDb, int id) {
+    public FavouriteMovieByIdViewModelFactory( int id) {
 
-        this.mDb = mDb;
         this.movieId = id;
 
     }
@@ -24,6 +22,6 @@ public class FavouriteMovieByIdViewModelFactory extends ViewModelProvider.NewIns
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return  (T) new FavouriteMovieViewModelById( mDb, movieId);
+        return  (T) new FavouriteMovieViewModelById(  movieId );
     }
 }

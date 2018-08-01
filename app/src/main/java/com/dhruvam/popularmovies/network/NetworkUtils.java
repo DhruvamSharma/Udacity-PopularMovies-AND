@@ -27,7 +27,7 @@ import java.util.List;
  * Created by dell on 05-06-2018.
  */
 
-public class NetworkUtils {
+public final class NetworkUtils {
 
     private static String MOVIE_URL;
     private static String API_Key;
