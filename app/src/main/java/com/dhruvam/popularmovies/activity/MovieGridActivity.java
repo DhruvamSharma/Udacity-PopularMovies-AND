@@ -122,7 +122,7 @@ public class MovieGridActivity extends AppCompatActivity {
 
 
         //Setting up ViewModel
-        //        setUpViewModel();
+        //setUpViewModel();
 
 
         //Getting instance of view model of this activity for saving the configuration changes
@@ -249,6 +249,19 @@ public class MovieGridActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.e("inMaingridActivity","onDestroy");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.e("inMaingridActivity","onStop");
+    }
 
 
     /* Utitlity Methods */

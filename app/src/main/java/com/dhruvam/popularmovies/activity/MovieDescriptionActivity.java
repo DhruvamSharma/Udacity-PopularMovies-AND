@@ -408,7 +408,7 @@ public class MovieDescriptionActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
-        finish();
+        //finish();
     }
 
 
@@ -426,4 +426,10 @@ public class MovieDescriptionActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("inDescriptionActivity", "onDestroy");
+    }
 }

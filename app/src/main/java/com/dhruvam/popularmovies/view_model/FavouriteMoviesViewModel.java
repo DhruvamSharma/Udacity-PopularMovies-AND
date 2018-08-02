@@ -35,14 +35,22 @@ public class FavouriteMoviesViewModel extends ViewModel {
     //We could also make the class extend the AndroidViewModel and it would receive an application context easily.
     //this way we could avoid keeping a refrence to the context
     public FavouriteMoviesViewModel() {
-        Log.e("in favourites", "fetching from database");
-        favouriteMoviesRepository = new FavouriteMoviesRepository();
+
     }
 
     //Initialisation method for the view model and the repository. First time storing the data from the repository
     public void init(Context mContext) {
-        favouriteMoviesRepository.init(mContext);
-        favouriteMovieList = favouriteMoviesRepository.getFavouriteMovieList();
+
+        if(favouriteMoviesRepository == null) {
+
+            Log.e("in favourites", "fetching from database");
+
+            favouriteMoviesRepository = new FavouriteMoviesRepository();
+            favouriteMoviesRepository.init(mContext);
+            favouriteMovieList = favouriteMoviesRepository.getFavouriteMovieList();
+        }
+
+
     }
 
 
